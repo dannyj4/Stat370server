@@ -328,7 +328,7 @@ summary(lm(NHL_Goalies$W[Goalies] ~ NHL_Goalies$Age[Goalies]
 ##Multiple Regression without Sv% (it and GAA are cross-correlated)
 
 GoalieSalarySVPerc.MR <- summary(lm(NHL_Goalies$Salary[Goalies] ~ NHL_Goalies$Age[Goalies] + NHL_Goalies$GS[Goalies]
-                              + NHL_Goalies$WinPerc[Goalies] + NHL_Goalies$SVPG[Goalies]
+                              + NHL_Goalies$WinPerc[Goalies] + NHL_Goalies$`SV%`[Goalies]
                               + NHL_Goalies$SOPerc[Goalies] + NHL_Goalies$`QS%`[Goalies]))
 
 GoalieSalaryGAA.MR <- summary(lm(NHL_Goalies$Salary[Goalies] ~ NHL_Goalies$Age[Goalies] + NHL_Goalies$GS[Goalies]
@@ -346,6 +346,10 @@ GoalieWinsGAA.MR <- summary(lm(NHL_Goalies$WinPerc[Goalies] ~ NHL_Goalies$Age[Go
 GoalieWinsSVPG.MR <- summary(lm(NHL_Goalies$WinPerc[Goalies] ~ NHL_Goalies$Age[Goalies]
                                 + NHL_Goalies$SVPG[Goalies]
                                 + NHL_Goalies$SOPerc[Goalies] + NHL_Goalies$`QS%`[Goalies]))
+
+GoalieWinsSVPerc.MR <- summary(lm(NHL_Goalies$WinPerc[Goalies] ~ NHL_Goalies$Age[Goalies] + 
+     NHL_Goalies$`SV%`[Goalies] + NHL_Goalies$SOPerc[Goalies] + 
+     NHL_Goalies$`QS%`[Goalies]))
 
 ##Defining multiple regression summaries for Goalie Regressions
 ##Note: GAA and 'SV%' are cross-correlated
@@ -437,7 +441,7 @@ cor(NHL_Skaters$TmPoints[Defender], JeffrickasDEF)
 cor(NHL_Skaters$`+/-`[Defender], NHL_Skaters$TmPoints[Defender])
 
 cor(NHL_Goalies$Salary[Goalies], NHL_Goalies$WinPerc[Goalies])
-cor(NHL_Goalies$Salary[Goalies], JeffrickasGOL)
-cor(NHL_Goalies$WinPerc[Goalies], JeffrickasGOL)
+cor(JeffrickasGOL, NHL_Goalies$Salary[Goalies])
+cor(JeffrickasGOL, NHL_Goalies$WinPerc[Goalies])
 cor(NHL_Goalies$GAA[Goalies], NHL_Goalies$WinPerc[Goalies])
 
