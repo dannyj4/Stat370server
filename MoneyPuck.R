@@ -250,10 +250,10 @@ summary(lm(NHL_Goalies$W ~ NHL_Goalies$Age + NHL_Goalies$`SV%` + NHL_Goalies$GAA
            + NHL_Goalies$`QS%` + NHL_Goalies$SO))
 ##Initial Multiple regression for statistics on wins (all goalies)
 
-"RightWing" <- NHL_Skaters$GP > 16 & NHL_Skaters$Pos=='RW'
-"LeftWing" <- NHL_Skaters$GP > 16 & NHL_Skaters$Pos=='LW'
-"Center" <- NHL_Skaters$GP > 16 & NHL_Skaters$Pos=='C'
-"Forward" <- RightWing | LeftWing | Center
+RightWing <- NHL_Skaters$GP > 16 & NHL_Skaters$Pos=='RW'
+LeftWing <- NHL_Skaters$GP > 16 & NHL_Skaters$Pos=='LW'
+Center <- NHL_Skaters$GP > 16 & NHL_Skaters$Pos=='C'
+Forward <- RightWing | LeftWing | Center
 ##Defining Forward as an LW, C, or RW playing more than 16 games
 
 summary(lm(NHL_Skaters$Salary[Forward] ~ NHL_Skaters$Age[Forward] + NHL_Skaters$GP[Forward] 
@@ -277,10 +277,10 @@ summary(lm(NHL_Skaters$Salary[Forward] ~ NHL_Skaters$Age[Forward] + NHL_Skaters$
            + NHL_Skaters$`+/-`[Forward]))
 ##Multiple Regression (salary as y) without Shots (Shots and Goals are cross-correlated) for Forwards
 
-"Defender" <- NHL_Skaters$GP > 16 & NHL_Skaters$Pos=='D'
+Defender <- NHL_Skaters$GP > 16 & NHL_Skaters$Pos=='D'
 ##Defining Defender as a D playing more than 16 Games
 
-"Other" <- !Forward & !Defender
+Other <- !Forward & !Defender
 ## Define Others as skaters who played fewer than 16 games (neither forwards nor defenders in this set)
 
 summary(lm(NHL_Skaters$Salary[Defender] ~ NHL_Skaters$Age[Defender] + NHL_Skaters$GP[Defender] 
@@ -296,7 +296,7 @@ summary(lm(NHL_Skaters$TmPoints[Defender] ~ NHL_Skaters$Age[Defender] + NHL_Skat
            + NHL_Skaters$`+/-`[Defender]))
 ##Multiple Regression for Defenders who play more than 16 games (Team Points as y)
 
-"Goalies" <- NHL_Goalies$GS > 12
+Goalies <- NHL_Goalies$GS > 12
 ##Defining Goalies as those who started more than 12 games
 
 NHL_Goalies$SVPG <- NHL_Goalies$SV/NHL_Goalies$GP
@@ -342,10 +342,6 @@ GoalieSalarySVPG.MR <- summary(lm(NHL_Goalies$Salary[Goalies] ~ NHL_Goalies$Age[
 GoalieWinsGAA.MR <- summary(lm(NHL_Goalies$WinPerc[Goalies] ~ NHL_Goalies$Age[Goalies]
                                + NHL_Goalies$GAA[Goalies]  
                                + NHL_Goalies$SOPerc[Goalies] + NHL_Goalies$`QS%`[Goalies]))
-
-GoalieWinsSVPerc.MR <- summary(lm(NHL_Goalies$WinPerc[Goalies] ~ NHL_Goalies$Age[Goalies]
-                                  + NHL_Goalies$`SV%`[Goalies] 
-                                  + NHL_Goalies$SOPerc[Goalies] + NHL_Goalies$`QS%`[Goalies]))
 
 GoalieWinsSVPG.MR <- summary(lm(NHL_Goalies$WinPerc[Goalies] ~ NHL_Goalies$Age[Goalies]
                                 + NHL_Goalies$SVPG[Goalies]
@@ -408,17 +404,17 @@ JeffrickasFWD <- (2.892*Age.z[Forward] + 8.703*Games.z[Forward] + 3.733*Goals.z[
                     + 6.605*Assists.z[Forward] - 0.559*PenMins.z[Forward] 
                     + 1.295*ShotPerc.z[Forward] + 18.36*Shots.z[Forward]
                     + 4.117*Blocks.z[Forward] + 0.902*Hits.z[Forward]
-                    + 0.302*FaceOffWins.z[Forward] + 185.559*PlusMinus.z[Forward])
+                    + 0.302*FaceOffWins.z[Forward] + 185.559*PlusMinus.z[Forward] - 11.1726)
 ##Beginning of aggregate value statistic, the 'Jeffrickas Index', for forwards
                       
 JeffrickasDEF <- (0.3064*Age.z[Defender] + 2.621*Games.z[Defender] - 0.904*Goals.z[Defender] 
                     + 2.604*Assists.z[Defender] - 0.244*PenMins.z[Defender] + 3.287*ShotPerc.z[Defender] 
                     + 0.974*Shots.z[Defender] + 0.0463*Blocks.z[Defender] - 0.0163*Hits.z[Defender] 
-                    + 122.191*PlusMinus.z[Defender])
+                    + 122.191*PlusMinus.z[Defender] - 14.7354)
 ##Beginning of aggregate value statistic, the 'Jeffrickas Index', for defenders
 
 JeffrickasGOL <- (4.38*SavePerc.z[Goalies] - 0.727*GoalieAge.z[Goalies] - 17.573*GoalsAgainstAvg.z[Goalies] 
-                  + 0.569*QualityStartPerc.z[Goalies] + 2.97*ShutoutPerc.z[Goalies])
+                  + 0.569*QualityStartPerc.z[Goalies] + 2.97*ShutoutPerc.z[Goalies] - 2.538*SavePerGame.z[Goalies] - 2.733958)
 ##Beginning of aggregate value statistic, the 'Jeffrickas Index', for goalies
 
 #Correlation Plots
@@ -426,8 +422,8 @@ string.free.goalies <- NHL_Goalies[,-c(1:2,4,13:14,18,20:22,28:29)]
 string.free.skaters <- NHL_Skaters[,-c(1:4,5,27,20)]
 Goalies.Cor <- cor(string.free.goalies)
 Skaters.Cor <- cor(string.free.skaters)
-corrplot(Goalies.Cor, method = "circle") #plot matrix
-corrplot(Skaters.Cor, method = "circle") #plot matrix
+corrplot(Goalies.Cor, method = "circle")
+corrplot(Skaters.Cor, method = "circle") 
 
 #Correlations
 cor(NHL_Skaters$Salary[Forward], NHL_Skaters$TmPoints[Forward])
