@@ -427,7 +427,7 @@ string.free.skaters <- NHL_Skaters[,-c(1:4,5,27,20)]
 Goalies.Cor <- cor(string.free.goalies)
 Skaters.Cor <- cor(string.free.skaters)
 corrplot(Goalies.Cor, method = "circle")
-corrplot(Skaters.Cor, method = "circle") 
+corrplot(Skaters.Cor, method = "circle")  
 
 #Correlations
 cor(NHL_Skaters$Salary[Forward], NHL_Skaters$TmPoints[Forward])

@@ -551,7 +551,9 @@ plot(JeffrickasGOL, NHL_Goalies$WinPerc[Goalies])
 
 Having established an index for Goalies, and a general understanding of what statistics contribute to both salary and Win%, the same methodology was then applied to Skaters (non-goalies). However, due to the differing roles each position plays on the ice, the Skaters were divided into Forwards and Defensemen, each getting their own regression model and Jeffrickas Index.
 
-For Skaters, Shots (S) and Goals (G) were found to be cross-correlated, as it stands to reason that a player who takes more shots will score more goals. As such, two separate regressions were run to account for said cross correlation. For Forwards, much more correlation was found between relevant statistics and salary. Only assists (A), +/-, and Penalty Minutes (PIM) were never significantly correlated.
+For Skaters, Shots (S) and Goals (G) were found to be cross-correlated, as it stands to reason that a player who takes more shots will score more goals. As such, two separate regressions were run to account for said cross correlation. 
+
+For Forwards, much more correlation was found between relevant statistics and salary than there were in the Goalie tests. Only assists (A), +/-, and Penalty Minutes (PIM) were never significantly correlated for forwards. Full results can be seen below.
 
 ***
 
@@ -607,6 +609,32 @@ ForwardsTmPointsShots.MR
 ```{r, comment = NA, null_prefix=TRUE}
 
 ForwardsTmPointsGoals.MR
+
+```
+
+***
+
+<br>
+
+## Forward Jeffrickas Index
+
+Using the same algorithm as was used for Goalies, Forwards were assigned their own Jeffrickas score (with the mean again adjusted to be zero). This index for forwards was found to correlate about 63.84% with Team Points. This was only slightly lower than the best correlated statistic, +/-, which scored a 64.59%. However, since +/- measures how many goals a team scores with a given player on the ice minus how many times an opponent scores with a given player on the ice, it stands to reason that it should correlate better than anything, as it is almost a direct measure goals scored versus goals allowed, which translate to wins and losses.
+
+The summary statistics for Forwards' Jeffrickas and the graph of its correlation with Team Points are shown below. 
+
+***
+
+```{r, comment = NA, null_prefix=TRUE}
+
+summary(JeffrickasFWD)
+
+```
+
+***
+
+```{r, comment = NA, null_prefix=TRUE}
+
+plot(JeffrickasFWD, NHL_Skaters$TmPoints[Forward])
 
 ```
 
