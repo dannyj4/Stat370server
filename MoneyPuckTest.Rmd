@@ -1,0 +1,79 @@
+---
+title: "MoneyPuck Test"
+author: "Dan Savickas"
+date: "4/7/2017"
+output:
+  html_document:
+    toc: yes
+    toc_float: yes
+subtitle: A Statistical Examination of Player Quality in the NHL
+---
+
+##Abstract
+
+If any professional sports league draws little or no attention to contract details, it is the NHL. The league receives paltry coverage in the media and is generally regarded as the least popular of the major sports in the United States. Thus, poorly drawn up contracts, grossly overpaid and underpaid players, and dark horses generally fly under the radar to the casual fan. However, even a brief analysis of the data suggests that there is a significant discrepancy between the players that produce wins for their team, and those that are the most highly paid. Of course, there is the unquantifiable star power factor to consider, but for the purposes of winning games, NHL front offices appear to be off-base. In the spirit of the sabermetrics that revolutionized the MLB, and produced the Oscar-nominated picture, "MoneyBall", this inquiry is an effort to develop an algorithm that more accurately reflects player value, than any existing metric.
+
+##Acknowledgements
+
+Special thanks are owed to Professor Sean Carver, PhD, of American University, for providing guidance and his own knowledge of RStudio, which greatly contributed to this final product. Also providing invaluable assistance in this inquiry was Paul Jeffries, an American University student, and financial engineer at Fannie Mae. Statistics referenced were pulled from hockey-reference .com and salary data from sportrac. com.
+
+***
+
+```{r setup, include=FALSE, comment = NA}
+knitr::opts_chunk$set(echo = TRUE)
+
+# A Prefix nulling hook.
+
+# Make sure to keep the default for normal processing.
+default_output_hook <- knitr::knit_hooks$get("output")
+
+# Output hooks handle normal R console output.
+knitr::knit_hooks$set( output = function(x, options) {
+
+  comment <- knitr::opts_current$get("comment")
+  if( is.na(comment) ) comment <- ""
+  can_null <- grepl( paste0( comment, "\\s*\\[\\d?\\]" ),
+                     x, perl = TRUE)
+  do_null <- isTRUE( knitr::opts_current$get("null_prefix") )
+  if( can_null && do_null ) {
+    # By default R print output aligns at the right brace.
+    align_index <- regexpr( "\\]", x )[1] - 1
+    # Two cases: start or newline
+    re <- paste0( "^.{", align_index, "}\\]")
+    rep <- comment
+    x <- gsub( re, rep,  x )
+    re <- paste0( "\\\n.{", align_index, "}\\]")
+    rep <- paste0( "\n", comment )
+    x <- gsub( re, rep,  x )
+  }
+
+  default_output_hook( x, options )
+
+})
+
+knitr::opts_template$set("kill_prefix"=list(comment=NA, null_prefix=TRUE))
+
+library(readr)
+NHL_Skaters <- read_csv("NHL_Stats.csv")
+View(NHL_Skaters)
+##Skaters
+
+NHL_Goalies <- read_csv("NHL_Stats_Goalies.csv")
+View(NHL_Goalies)
+##Goalies
+
+summary(NHL_Skaters)
+summary(NHL_Goalies)
+
+```
+
+##Statistical Testing
+
+Given that, in the NHL, different teams have various schemes, gameplans, line changes, and strategies in play, the most direct possible comparisons of player value come at the Goaltender position. A goalie is either going to allow a shot to go in, or he isn't. Of course, being an NHL goaltender is much harder work than that simplification, but that is the essence of a goaltender's  duties. The relevant statistics considered to be expected to contribute to a goalie's salary were Age, Win Percentage, Save Percentage, Goals Against per Game, Saves Per Game, Shutout Percentage, and Quality Start Percentage (A quality start is a game in which a goalie has a save percentage higher than the league average, or one in which he saves 88.5% of shots, while also allowing fewer than 2 goals). Knowing logically that Save Percentage, Saves Per Game, and Goals Against Average would be cross-correlated, three separate multiple regressions were run:
+
+
+```{r, echo=F, comment = NA, null_prefix=TRUE, results='asis'}
+summary(NHL_Skaters)
+summary(NHL_Goalies)
+```
+
