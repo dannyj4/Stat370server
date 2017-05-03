@@ -31,6 +31,7 @@ Games.z <- scale(NHL_Skaters$GP)
 Goals.z <- scale(NHL_Skaters$G)
 Assists.z <- scale(NHL_Skaters$A)
 PlusMinus.z <- scale(NHL_Skaters$`+/-`)
+PlusMinusAdj.z <- scale(NHL_Skaters$PlusMinusAdj)
 PenMins.z <- scale(NHL_Skaters$PIM)
 Shots.z <- scale(NHL_Skaters$S)
 ShotPerc.z <- scale(NHL_Skaters$`S%`)
@@ -42,6 +43,12 @@ FaceOffs.z <- scale(NHL_Skaters$`FO%`)
 FaceOffWins.z <- scale(NHL_Skaters$FOW)
 SkaterSalary.z <- scale(NHL_Skaters$Salary)
 TeamPoints.z <- scale(NHL_Skaters$TmPoints)
+GoalPerGame.z <- scale(NHL_Skaters$GPG)
+AsstsPerGame.z <- scale(NHL_Skaters$APG)
+PenMinsPerGame.z <- scale(NHL_Skaters$PenPG)
+ShotPerGame.z <- scale(NHL_Skaters$SPG)
+BlocksPerGame.z <- scale(NHL_Skaters$BPG)
+HitsPerGame.z <- scale(NHL_Skaters$HPG)
 ##Z-scores for all relevant skater data
 
 GoalieAge.z <- scale(NHL_Goalies$Age)
@@ -256,6 +263,124 @@ Center <- NHL_Skaters$GP > 16 & NHL_Skaters$Pos=='C'
 Forward <- RightWing | LeftWing | Center
 ##Defining Forward as an LW, C, or RW playing more than 16 games
 
+Ducks <- NHL_Skaters$Tm=='ANA'
+Coyotes <- NHL_Skaters$Tm=='ARI'
+Bruins <- NHL_Skaters$Tm=='BOS'
+Sabres <- NHL_Skaters$Tm=='BUF'
+Hurricanes <- NHL_Skaters$Tm=='CAR'
+BlueJackets <- NHL_Skaters$Tm=='CBJ'
+Flames <- NHL_Skaters$Tm=='CGY'
+BlackHawks <- NHL_Skaters$Tm=='CHI'
+Avalanche <- NHL_Skaters$Tm=='COL'
+DallasStars <- NHL_Skaters$Tm=='DAL'
+RedWings <- NHL_Skaters$Tm=='DET'
+Oilers <- NHL_Skaters$Tm=='EDM'
+Panthers <- NHL_Skaters$Tm=='FLA'
+Kings <- NHL_Skaters$Tm=='LAK'
+Wild <- NHL_Skaters$Tm=='MIN'
+Canadiens <- NHL_Skaters$Tm=='MTL'
+Devils <- NHL_Skaters$Tm=='NJD'
+Predators <- NHL_Skaters$Tm=='NSH'
+Islanders <- NHL_Skaters$Tm=='NYI'
+Rangers <- NHL_Skaters$Tm=='NYR'
+Senators <- NHL_Skaters$Tm=='OTT'
+Flyers <- NHL_Skaters$Tm=='PHI'
+Penguins <- NHL_Skaters$Tm=='PIT'
+Sharks <- NHL_Skaters$Tm=='SJS'
+Blues <- NHL_Skaters$Tm=='STL'
+Lightning <- NHL_Skaters$Tm=='TBL'
+MapleLeafs <- NHL_Skaters$Tm=='TOR'
+FreeAgents <- NHL_Skaters$Tm=='TOT'
+Canucks <- NHL_Skaters$Tm=='VAN'
+Jets <- NHL_Skaters$Tm=='WPG'
+Capitals <- NHL_Skaters$Tm=='WSH'
+#Defining the teams
+
+NHL_Skaters$TmAvgPlusMinus <- c(2.72, 2.72, 2.72, 2.72, 2.72, 2.72, 2.72, 2.72, 2.72, 2.72, 2.72, 2.72, 2.72, 2.72, 2.72, 
+                              2.72, 2.72, 2.72, 2.72, 2.72, 2.72, 2.72, 2.72, 2.72, 2.72, 2.72, 2.72, 2.72, 2.72, 2.72, 
+                              2.72, 2.72, -7.52, -7.52, -7.52, -7.52, -7.52, -7.52, -7.52, -7.52, -7.52, -7.52, -7.52, 
+                              -7.52, -7.52, -7.52, -7.52, -7.52, -7.52, -7.52, -7.52, -7.52, -7.52, -7.52, -7.52, -7.52, 
+                              -7.52, 0.31, 0.31, 0.31, 0.31, 0.31, 0.31, 0.31, 0.31, 0.31, 0.31, 0.31, 0.31, 0.31, 0.31, 
+                              0.31, 0.31, 0.31, 0.31, 0.31, 0.31, 0.31, 0.31, 0.31, 0.31, 0.31, 0.31, 0.31, 0.31, 0.31,
+                              -5.29, -5.29, -5.29, -5.29, -5.29, -5.29, -5.29, -5.29, -5.29, -5.29, -5.29, -5.29, -5.29, 
+                              -5.29, -5.29, -5.29, -5.29, -5.29, -5.29, -5.29, -5.29, -5.29, -5.29, -5.29, -5.29, -5.29, 
+                              -5.29, -5.29, -5.29, -5.29, -5.29, -5.29, -5.29, -5.29, -4.29, -4.29, -4.29, -4.29, -4.29, 
+                              -4.29, -4.29, -4.29, -4.29, -4.29, -4.29, -4.29, -4.29, -4.29, -4.29, -4.29, -4.29, -4.29, 
+                              -4.29, -4.29, -4.29, -4.29, -4.29, -4.29, -4.29, -4.29, -4.29, -4.29, 8.88, 8.88, 8.88, 
+                              8.88, 8.88, 8.88, 8.88, 8.88, 8.88, 8.88, 8.88, 8.88, 8.88, 8.88, 8.88, 8.88, 8.88, 8.88, 
+                              8.88, 8.88, 8.88, 8.88, 8.88, 8.88, -0.59, -0.59, -0.59, -0.59, -0.59, -0.59, -0.59, -0.59, 
+                              -0.59, -0.59, 
+                              -0.59, -0.59, -0.59, -0.59, -0.59, -0.59, -0.59, -0.59, -0.59, -0.59, -0.59, -0.59, -0.59, 
+                              -0.59, -0.59, -0.59, -0.59, 6.72, 6.72, 6.72, 6.72, 6.72, 6.72, 6.72, 6.72, 6.72, 6.72, 
+                              6.72, 6.72, 6.72, 6.72, 6.72, 6.72, 6.72, 6.72, 6.72, 6.72, 6.72, 6.72, 6.72, 6.72, 6.72, 
+                              -13.85, -13.85, -13.85, -13.85, -13.85, -13.85, -13.85, -13.85, -13.85, -13.85, -13.85, 
+                              -13.85, -13.85, -13.85, -13.85, -13.85, -13.85, -13.85, -13.85, -13.85, -13.85, -13.85, 
+                              -13.85, -13.85, -13.85, -13.85, -3.04, -3.04, -3.04, -3.04, -3.04, -3.04, -3.04, -3.04, 
+                              -3.04, -3.04, -3.04, -3.04, -3.04, -3.04, -3.04, -3.04, -3.04, -3.04, -3.04, -3.04, -3.04, 
+                              -3.04, -3.04, -3.04, -3.04, -3.04, -6.43, -6.43, -6.43, -6.43, -6.43, -6.43, -6.43, -6.43,
+                              -6.43, -6.43, -6.43, -6.43, -6.43, -6.43, -6.43, -6.43, -6.43, -6.43, -6.43, -6.43, -6.43,
+                              -6.43, -6.43, -6.43, -6.43, -6.43, -6.43, -6.43, 3.67, 3.67, 3.67, 3.67, 3.67, 3.67, 3.67,
+                              3.67, 3.67, 3.67, 3.67, 3.67, 3.67, 3.67, 3.67, 3.67, 3.67, 3.67, 3.67, 3.67, 3.67, 3.67,
+                              3.67, 3.67, 3.67, 3.67, 3.67, -6.88, -6.88, -6.88, -6.88, -6.88, -6.88, -6.88, -6.88, -6.88,
+                              -6.88, -6.88, -6.88, -6.88, -6.88, -6.88, -6.88, -6.88, -6.88, -6.88, -6.88, -6.88, -6.88,
+                              -6.88, -6.88, -6.88, -2.6, -2.6, -2.6, -2.6, -2.6, -2.6, -2.6, -2.6, -2.6, -2.6, -2.6, -2.6,
+                              -2.6, -2.6, -2.6, -2.6, -2.6, -2.6, -2.6, -2.6, -2.6, -2.6, -2.6, -2.6, -2.6, 8.64, 8.64,
+                              8.64, 8.64, 8.64, 8.64, 8.64, 8.64, 8.64, 8.64, 8.64, 8.64, 8.64, 8.64, 8.64, 8.64, 8.64,
+                              8.64, 8.64, 8.64, 8.64, 8.64, 8.64, 8.64, 8.64, 8.64, 8.64, 8.64, 4.32, 4.32, 4.32, 4.32,
+                              4.32, 4.32, 4.32, 4.32, 4.32, 4.32, 4.32, 4.32, 4.32, 4.32, 4.32, 4.32, 4.32, 4.32, 4.32,
+                              4.32, 4.32, 4.32, 4.32, 4.32, 4.32, 4.32, 4.32, 4.32, -8.13, -8.13, -8.13, -8.13, -8.13,
+                              -8.13, -8.13, -8.13, -8.13, -8.13, -8.13, -8.13, -8.13, -8.13, -8.13, -8.13, -8.13, -8.13,
+                              -8.13, -8.13, -8.13, -8.13, -8.13, -8.13, -8.13, -8.13, -8.13, -8.13, -8.13, -8.13, 2.1, 
+                              2.1,
+                              2.1, 2.1, 2.1, 2.1, 2.1, 2.1, 2.1, 2.1, 2.1, 2.1, 2.1, 2.1, 2.1, 2.1, 2.1, 2.1, 2.1, 2.1,
+                              2.1, 2.1, 2.1, 2.1, 2.1, 2.1, 2.1, 2.1, 2.1, 2.1, 2.1, 0.89, 0.89, 0.89, 0.89, 0.89, 0.89,
+                              0.89, 0.89, 0.89, 0.89, 0.89, 0.89, 0.89, 0.89, 0.89, 0.89, 0.89, 0.89, 0.89, 0.89, 0.89,
+                              0.89, 0.89, 0.89, 0.89, 0.89, 0.89, 6.79, 6.79, 6.79, 6.79, 6.79, 6.79, 6.79, 6.79, 6.79,
+                              6.79, 6.79, 6.79, 6.79, 6.79, 6.79, 6.79, 6.79, 6.79, 6.79, 6.79, 6.79, 6.79, 6.79, 6.79,
+                              1.37, 1.37, 1.37, 1.37, 1.37, 1.37, 1.37, 1.37, 1.37, 1.37, 1.37, 1.37, 1.37, 1.37, 1.37,
+                              1.37, 1.37, 1.37, 1.37, 1.37, 1.37, 1.37, 1.37, 1.37, 1.37, 1.37, 1.37, 1.37, 1.37, 1.37,
+                              -4.25, -4.25, -4.25, -4.25, -4.25, -4.25, -4.25, -4.25, -4.25, -4.25, -4.25, -4.25, -4.25,
+                              -4.25, -4.25, -4.25, -4.25, -4.25, -4.25, -4.25, -4.25, -4.25, -4.25, -4.25, -4.25, -4.25,
+                              -4.25, -4.25, 6.1, 6.1, 6.1, 6.1, 6.1, 6.1, 6.1, 6.1, 6.1, 6.1, 6.1, 6.1, 6.1, 6.1, 6.1, 
+                              6.1,
+                              6.1, 6.1, 6.1, 6.1, 6.1, 6.1, 6.1, 6.1, 6.1, 6.1, 6.1, 6.1, 6.1, 6.1, 6.1, 3.19, 3.19, 3.19,
+                              3.19, 3.19, 3.19, 3.19, 3.19, 3.19, 3.19, 3.19, 3.19, 3.19, 3.19, 3.19, 3.19, 3.19, 3.19,
+                              3.19, 3.19, 3.19, 3.19, 3.19, 3.19, 3.19, 3.19, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3,
+                              1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3,
+                              -1.75, -1.75, -1.75, -1.75, -1.75, -1.75, -1.75, -1.75, -1.75, -1.75, -1.75, -1.75, -1.75,
+                              -1.75, -1.75, -1.75, -1.75, -1.75, -1.75, -1.75, -1.75, -1.75, -1.75, -1.75, -1.75, -1.75,
+                              -1.75, -1.75, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55,
+                              0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, -4.16, -4.16, -4.16, -4.16, -4.16, 
+                              -4.16,
+                              -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, 
+                              -4.16,
+                              -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, 
+                              -4.16,
+                              -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, 
+                              -4.16,
+                              -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, 
+                              -4.16,
+                              -7.26, -7.26, -7.26, -7.26, -7.26, -7.26, -7.26, -7.26, -7.26, -7.26, -7.26, -7.26, -7.26,
+                              -7.26, -7.26, -7.26, -7.26, -7.26, -7.26, -7.26, -7.26, -7.26, -7.26, -7.26, -7.26, -7.26,
+                              -7.26, -7.26, -7.26, -7.26, -7.26, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25,
+                              0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25,
+                              0.25, 0.25, 0.25, 0.25, 13.12, 13.12, 13.12, 13.12, 13.12, 13.12, 13.12, 13.12, 13.12, 
+                              13.12,
+                              13.12, 13.12, 13.12, 13.12, 13.12, 13.12, 13.12, 13.12, 13.12, 13.12, 13.12, 13.12, 13.12,
+                              13.12, 13.12, 13.12)
+#Deefine Variable Average Plus Minus per team
+
+NHL_Skaters$PlusMinusAdj <- c(NHL_Skaters$`+/-` - NHL_Skaters$TmAvgPlusMinus)
+#Defining Variable for Adjusted Plus/Minus
+
+NHL_Skaters$GPG <- c(NHL_Skaters$G/NHL_Skaters$GP)
+NHL_Skaters$APG <- c(NHL_Skaters$A/NHL_Skaters$GP)
+NHL_Skaters$PenPG <- c(NHL_Skaters$PIM/NHL_Skaters$GP)
+NHL_Skaters$SPG <- c(NHL_Skaters$S/NHL_Skaters$GP)
+NHL_Skaters$BPG <- c(NHL_Skaters$BLK/NHL_Skaters$GP)
+NHL_Skaters$HPG <- c(NHL_Skaters$HIT/NHL_Skaters$GP)
+#Defining Per Game Statistics
+
 summary(lm(NHL_Skaters$Salary[Forward] ~ NHL_Skaters$Age[Forward] + NHL_Skaters$GP[Forward] 
            + NHL_Skaters$G[Forward] + NHL_Skaters$A[Forward] + NHL_Skaters$PIM[Forward] 
            + NHL_Skaters$S[Forward] + NHL_Skaters$`S%`[Forward] + NHL_Skaters$TOI[Forward] 
@@ -347,78 +472,89 @@ GoalieWinsSVPG.MR <- summary(lm(NHL_Goalies$WinPerc[Goalies] ~ NHL_Goalies$Age[G
                                 + NHL_Goalies$SVPG[Goalies]
                                 + NHL_Goalies$SOPerc[Goalies] + NHL_Goalies$`QS%`[Goalies]))
 
-GoalieWinsSVPerc.MR <- summary(lm(NHL_Goalies$WinPerc[Goalies] ~ NHL_Goalies$Age[Goalies] + 
-     NHL_Goalies$`SV%`[Goalies] + NHL_Goalies$SOPerc[Goalies] + 
-     NHL_Goalies$`QS%`[Goalies]))
+GoalieWinsSVPerc.MR <- summary(lm(NHL_Goalies$WinPerc[Goalies] ~ NHL_Goalies$Age[Goalies] 
+                                  + NHL_Goalies$`SV%`[Goalies] + NHL_Goalies$SOPerc[Goalies] 
+                                  + NHL_Goalies$`QS%`[Goalies]))
 
 ##Defining multiple regression summaries for Goalie Regressions
 ##Note: GAA and 'SV%' are cross-correlated
 
 ForwardsSalaryShots.MR <- summary(lm(NHL_Skaters$Salary[Forward] ~ NHL_Skaters$Age[Forward] + NHL_Skaters$GP[Forward] 
-                                     + NHL_Skaters$S[Forward] + NHL_Skaters$A[Forward] + NHL_Skaters$PIM[Forward] 
-                                     + NHL_Skaters$`S%`[Forward] + NHL_Skaters$TOI[Forward] 
-                                     + NHL_Skaters$BLK[Forward] + NHL_Skaters$HIT[Forward] + NHL_Skaters$FOW[Forward] 
-                                     + NHL_Skaters$`+/-`[Forward]))
+                                     + NHL_Skaters$SPG[Forward] + NHL_Skaters$APG[Forward] + NHL_Skaters$PenPG[Forward] 
+                                     + NHL_Skaters$`S%`[Forward] + NHL_Skaters$ATOI[Forward] 
+                                     + NHL_Skaters$BPG[Forward] + NHL_Skaters$HPG[Forward] 
+                                     + NHL_Skaters$PlusMinusAdj[Forward]))
 
 ForwardsSalaryGoals.MR <- summary(lm(NHL_Skaters$Salary[Forward] ~ NHL_Skaters$Age[Forward] + NHL_Skaters$GP[Forward] 
-                                     + NHL_Skaters$G[Forward] + NHL_Skaters$A[Forward] + NHL_Skaters$PIM[Forward] 
-                                     + NHL_Skaters$`S%`[Forward] + NHL_Skaters$TOI[Forward] 
-                                     + NHL_Skaters$BLK[Forward] + NHL_Skaters$HIT[Forward] + NHL_Skaters$FOW[Forward] 
-                                     + NHL_Skaters$`+/-`[Forward]))
+                                     + NHL_Skaters$GPG[Forward] + NHL_Skaters$APG[Forward] + NHL_Skaters$PenPG[Forward] 
+                                     + NHL_Skaters$`S%`[Forward] + NHL_Skaters$ATOI[Forward] 
+                                     + NHL_Skaters$BPG[Forward] + NHL_Skaters$HPG[Forward] 
+                                     + NHL_Skaters$PlusMinusAdj[Forward]))
 
 ForwardsTmPointsShots.MR <- summary(lm(NHL_Skaters$TmPoints[Forward] ~ NHL_Skaters$Age[Forward] + NHL_Skaters$GP[Forward] 
-                                       + NHL_Skaters$A[Forward] + NHL_Skaters$PIM[Forward] 
-                                       + NHL_Skaters$S[Forward] + NHL_Skaters$`S%`[Forward] + NHL_Skaters$TOI[Forward] 
-                                       + NHL_Skaters$BLK[Forward] + NHL_Skaters$HIT[Forward] + NHL_Skaters$FOW[Forward] 
-                                       + NHL_Skaters$`+/-`[Forward]))
+                                       + NHL_Skaters$APG[Forward] + NHL_Skaters$PenPG[Forward] 
+                                       + NHL_Skaters$SPG[Forward] + NHL_Skaters$`S%`[Forward] + NHL_Skaters$ATOI[Forward] 
+                                       + NHL_Skaters$BPG[Forward] + NHL_Skaters$HPG[Forward]
+                                       + NHL_Skaters$PlusMinusAdj[Forward]))
 
 ForwardsTmPointsGoals.MR <- summary(lm(NHL_Skaters$TmPoints[Forward] ~ NHL_Skaters$Age[Forward] + NHL_Skaters$GP[Forward] 
-                                       + NHL_Skaters$G[Forward] + NHL_Skaters$A[Forward] + NHL_Skaters$PIM[Forward] 
-                                       + NHL_Skaters$`S%`[Forward] + NHL_Skaters$TOI[Forward] 
-                                       + NHL_Skaters$BLK[Forward] + NHL_Skaters$HIT[Forward] + NHL_Skaters$FOW[Forward] 
-                                       + NHL_Skaters$`+/-`[Forward]))
+                                       + NHL_Skaters$APG[Forward] + NHL_Skaters$PenPG[Forward] 
+                                       + NHL_Skaters$GPG[Forward] + NHL_Skaters$`S%`[Forward] + NHL_Skaters$ATOI[Forward] 
+                                       + NHL_Skaters$BPG[Forward] + NHL_Skaters$HPG[Forward]
+                                       + NHL_Skaters$PlusMinusAdj[Forward]))
 ##Defining multiple regression summaries for forward regressions
 ##Note: Goals and Shots are cross-correlated
 
 DefenderSalaryGoals.MR <- summary(lm(NHL_Skaters$Salary[Defender] ~ NHL_Skaters$Age[Defender] + NHL_Skaters$GP[Defender] 
-                                     + NHL_Skaters$G[Defender] + NHL_Skaters$A[Defender] + NHL_Skaters$PIM[Defender] 
-                                     + NHL_Skaters$`S%`[Defender] + NHL_Skaters$TOI[Defender] 
-                                     + NHL_Skaters$BLK[Defender] + NHL_Skaters$HIT[Defender] + NHL_Skaters$`+/-`[Defender]))
+                                     + NHL_Skaters$GPG[Defender] + NHL_Skaters$APG[Defender] 
+                                     + NHL_Skaters$PenPG[Defender] 
+                                     + NHL_Skaters$`S%`[Defender] + NHL_Skaters$ATOI[Defender] 
+                                     + NHL_Skaters$BPG[Defender] + NHL_Skaters$HPG[Defender] 
+                                     + NHL_Skaters$PlusMinusAdj[Defender]))
 
 DefenderSalaryShots.MR <- summary(lm(NHL_Skaters$Salary[Defender] ~ NHL_Skaters$Age[Defender] + NHL_Skaters$GP[Defender] 
-                                     + NHL_Skaters$A[Defender] + NHL_Skaters$PIM[Defender] 
-                                     + NHL_Skaters$S[Defender] + NHL_Skaters$`S%`[Defender] + NHL_Skaters$TOI[Defender] 
-                                     + NHL_Skaters$BLK[Defender] + NHL_Skaters$HIT[Defender] + NHL_Skaters$`+/-`[Defender]))
+                                     + NHL_Skaters$SPG[Defender] + NHL_Skaters$APG[Defender] 
+                                     + NHL_Skaters$PenPG[Defender] 
+                                     + NHL_Skaters$`S%`[Defender] + NHL_Skaters$ATOI[Defender] 
+                                     + NHL_Skaters$BPG[Defender] + NHL_Skaters$HPG[Defender] 
+                                     + NHL_Skaters$PlusMinusAdj[Defender]))
 
-DefenderTmPointsGoals.MR <- summary(lm(NHL_Skaters$TmPoints[Defender] ~ NHL_Skaters$Age[Defender] + NHL_Skaters$GP[Defender] 
-                                       + NHL_Skaters$G[Defender] + NHL_Skaters$A[Defender] + NHL_Skaters$PIM[Defender] 
-                                       + NHL_Skaters$`S%`[Defender] + NHL_Skaters$TOI[Defender] 
-                                       + NHL_Skaters$BLK[Defender] + NHL_Skaters$HIT[Defender] 
-                                       + NHL_Skaters$`+/-`[Defender]))
+DefenderTmPointsGoals.MR <- summary(lm(NHL_Skaters$TmPoints[Defender] ~ NHL_Skaters$Age[Defender] 
+                                       + NHL_Skaters$GP[Defender] 
+                                       + NHL_Skaters$GPG[Defender] + NHL_Skaters$APG[Defender] 
+                                       + NHL_Skaters$PenPG[Defender] 
+                                       + NHL_Skaters$`S%`[Defender] + NHL_Skaters$ATOI[Defender] 
+                                       + NHL_Skaters$BPG[Defender] + NHL_Skaters$HPG[Defender] 
+                                       + NHL_Skaters$PlusMinusAdj[Defender]))
 
-DefenderTmPointsShots.MR <- summary(lm(NHL_Skaters$TmPoints[Defender] ~ NHL_Skaters$Age[Defender] + NHL_Skaters$GP[Defender] 
-                                       + NHL_Skaters$A[Defender] + NHL_Skaters$PIM[Defender] 
-                                       + NHL_Skaters$S[Defender] + NHL_Skaters$`S%`[Defender] + NHL_Skaters$TOI[Defender] 
-                                       + NHL_Skaters$BLK[Defender] + NHL_Skaters$HIT[Defender] 
-                                       + NHL_Skaters$`+/-`[Defender]))
+DefenderTmPointsShots.MR <- summary(lm(NHL_Skaters$TmPoints[Defender] ~ NHL_Skaters$Age[Defender] 
+                                       + NHL_Skaters$GP[Defender] 
+                                       + NHL_Skaters$SPG[Defender] + NHL_Skaters$APG[Defender] 
+                                       + NHL_Skaters$PenPG[Defender] 
+                                       + NHL_Skaters$`S%`[Defender] + NHL_Skaters$ATOI[Defender] 
+                                       + NHL_Skaters$BPG[Defender] + NHL_Skaters$HPG[Defender] 
+                                       + NHL_Skaters$PlusMinusAdj[Defender]))
 ##Defining multiple regressions for defender regressions
 ##Note: Goals and Shots are cross-correlated
 
-JeffrickasFWD <- (2.892*Age.z[Forward] + 8.703*Games.z[Forward] + 3.733*Goals.z[Forward]
-                    + 6.605*Assists.z[Forward] - 0.559*PenMins.z[Forward] 
-                    + 1.295*ShotPerc.z[Forward] + 18.36*Shots.z[Forward]
-                    + 4.117*Blocks.z[Forward] + 0.902*Hits.z[Forward]
-                    + 0.302*FaceOffWins.z[Forward] + 185.559*PlusMinus.z[Forward] - 11.1726)
+JeffrickasFWD <- (1.151*Age.z[Forward] + 1.707*Games.z[Forward] + 3.027*GoalPerGame.z[Forward]
+                    + 6.993*AsstsPerGame.z[Forward] - 1.685*PenMinsPerGame.z[Forward] 
+                    + 3.78*ShotPerc.z[Forward] + 2.863*ShotPerGame.z[Forward]
+                    + 3.818*BlocksPerGame.z[Forward] + 1.735*HitsPerGame.z[Forward]
+                    + 1.398*PlusMinusAdj.z[Forward] - 5.09281)
 ##Beginning of aggregate value statistic, the 'Jeffrickas Index', for forwards
                       
-JeffrickasDEF <- (0.3064*Age.z[Defender] + 2.621*Games.z[Defender] - 0.904*Goals.z[Defender] 
-                    + 2.604*Assists.z[Defender] - 0.244*PenMins.z[Defender] + 3.287*ShotPerc.z[Defender] 
-                    + 0.974*Shots.z[Defender] + 0.0463*Blocks.z[Defender] - 0.0163*Hits.z[Defender] 
-                    + 122.191*PlusMinus.z[Defender] - 14.7354)
+JeffrickasDEF <- (0.622*Age.z[Defender] + 1.493*Games.z[Defender] - 0.192*GoalPerGame.z[Defender] 
+                    + 2.993*AsstsPerGame.z[Defender] - 0.791*PenMinsPerGame.z[Defender] 
+                  + 1.867*ShotPerc.z[Defender] 
+                    + 0.448*ShotPerGame.z[Defender] + 1.507*BlocksPerGame.z[Defender] 
+                  - 0.075*HitsPerGame.z[Defender] 
+                    + 2.92*PlusMinusAdj.z[Defender] - 2.441374)
 ##Beginning of aggregate value statistic, the 'Jeffrickas Index', for defenders
 
-JeffrickasGOL <- (4.38*SavePerc.z[Goalies] - 0.727*GoalieAge.z[Goalies] - 17.573*GoalsAgainstAvg.z[Goalies] 
-                  + 0.569*QualityStartPerc.z[Goalies] + 2.97*ShutoutPerc.z[Goalies] - 2.538*SavePerGame.z[Goalies] - 2.733958)
+JeffrickasGOL <- (2.093*SavePerc.z[Goalies] - 0.852*GoalieAge.z[Goalies] - 4.192*GoalsAgainstAvg.z[Goalies] 
+                  + 0.754*QualityStartPerc.z[Goalies] + 1.723*ShutoutPerc.z[Goalies]
+                  - 1.607*SavePerGame.z[Goalies] - 0.724624)
 ##Beginning of aggregate value statistic, the 'Jeffrickas Index', for goalies
 
 #Correlation Plots
@@ -444,4 +580,7 @@ cor(NHL_Goalies$Salary[Goalies], NHL_Goalies$WinPerc[Goalies])
 cor(JeffrickasGOL, NHL_Goalies$Salary[Goalies])
 cor(JeffrickasGOL, NHL_Goalies$WinPerc[Goalies])
 cor(NHL_Goalies$GAA[Goalies], NHL_Goalies$WinPerc[Goalies])
+
+write.csv(NHL_Goalies, "/Users/Daniel/Documents/NHL_Goalies.csv")
+write.csv(NHL_Skaters, "/Users/Daniel/Documents/NHL_Skaters.csv")
 
