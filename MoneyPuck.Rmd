@@ -999,13 +999,6 @@ Auston Matthews (C, Toronto Maple Leafs),
 Viktor Arvidsson (LW, Nashville Predators),
 Jake Guentzel (C, Pittsburgh Penguins).
 
-```{r, comment = NA, null_prefix=TRUE}
-
-plot(FWD_Jeffrickas.z, FWD_Salary.z, 'p')
-lines(linear)
-
-```
-
 ***
 
 <br>
