@@ -957,7 +957,7 @@ lines(linear)
 
 For example, in the graph above, you'll see the Jeffrickas z-scores for all Forwards plotted on the horizontal axis, and their salary z-scores on the vertical axis. The mean salary for a Forward is $2.56 million, and the standard deviation for salary is 2.3 (in millions). The mean Jeffrickas for a Forward (as for all positions) is zero, with a standard deviation of 13.22. A point above the line indicates a player who is overpaid and thus underperformed (higher salary z-score), and a point under the line indicates a player who is underpaid and thus overperformed (higher Jeffrickas z-score). 
 
-For Defenders, the mean salary is $2.62 million, while the standard deviation is 2.05 (in millions). The mean Jeffrickas is zero, while the standard deviation is 6.00. The same rules apply to the graph below with regards to a player's proximity to the line. 
+For Defenders, the mean salary is 2.62 million, while the standard deviation is 2.05 (in millions). The mean Jeffrickas is zero, while the standard deviation is 6.00. The same rules apply to the graph below with regards to a player's proximity to the line. 
 
 ```{r, comment = NA, null_prefix=TRUE}
 
@@ -966,7 +966,7 @@ lines(linear)
 
 ```
 
-For Goalies, the mean salary is $3.39 million, with a standard deviation of 2.54 (in millions). The mean Jeffrickas score is again zero, and the standard deviation is 3.28.
+For Goalies, the mean salary is $3.39 million, with a standard deviation of 2.54 (in millions). The mean Jeffrickas score is again zero, and the standard deviation is 3.28. That graph is displayed below.
 
 ```{r, comment = NA, null_prefix=TRUE}
 
@@ -975,7 +975,28 @@ lines(linear)
 
 ```
 
+Using this methodolgy, to no surprise, McDavid emerges as the most underpaid Forward in the league. His Jeffrickas is the highest in the league amongst Forwards. With a Jeffrickas at his level, he should be paid a little under 9 million per year. However, he only received a salary of 832,500 this year. This isn't too shocking, as he is an incredibly young player. Nevertheless, the Oilers are getting an incredible deal during the length of McDavid's current contract. 
 
+<br>
+
+![The Oilers are gaining incredible value from their two young forwards](/Users/Daniel/Desktop/McDavidDraisaitl.png)
+
+<br>
+
+Beyond that, David Pastrnak, of the Boston Bruins, came in second, being undercut by a little under 6 million dollars given his value. Leon Draisaitl, a teammate of McDavid's in Edmonton, came in third, having been paid the same 832,500, but having deserved about 6 million.
+
+The top ten most underpaid Forwards are listed below, in order of how much they were underpaid:
+
+Connor McDavid, C, Edmonton Oilers
+David Pastrnak, RW, Boston Bruins
+Leon Draisaitl, C, Edmonton Oilers
+Conor Sheary, LW, Pittsburgh Penguins
+Jack Eichel, C, Buffalo Sabres
+Artemi Panarin, LW, Chicago Blackhawks
+Patrik Laine, RW, Winnipeg Jets
+Auston Matthews, C, Toronto Maple Leafs
+Viktor Arvidsson, LW, Nashville Predators
+Jake Guentzel, C, Pittsburgh Penguins
 
 ***
 
