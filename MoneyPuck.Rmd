@@ -987,7 +987,16 @@ Beyond that, David Pastrnak, of the Boston Bruins, came in second, being undercu
 
 The top ten most underpaid Forwards are listed below, in order of how much they were underpaid:
 
-Connor McDavid, C, Edmonton Oilers                                                                                   David Pastrnak, RW, Boston Bruins                                                                                      Leon Draisaitl, C, Edmonton Oilers                                                                                   Conor Sheary, LW, Pittsburgh Penguins                                                                                 Jack Eichel, C, Buffalo Sabres                                                                                         Artemi Panarin, LW, Chicago Blackhawks                                                                              Patrik Laine, RW, Winnipeg Jets                                                                                      Auston Matthews, C, Toronto Maple Leafs                                                                             Viktor Arvidsson, LW, Nashville Predators                                                                                Jake Guentzel, C, Pittsburgh Penguins
+Connor McDavid (C, Edmonton Oilers),
+David Pastrnak (RW, Boston Bruins),
+Leon Draisaitl (C, Edmonton Oilers),
+Conor Sheary (LW, Pittsburgh Penguins),
+Jack Eichel (C, Buffalo Sabres),
+Artemi Panarin (LW, Chicago Blackhawks),
+Patrik Laine (RW, Winnipeg Jets),
+Auston Matthews (C, Toronto Maple Leafs),
+Viktor Arvidsson (LW, Nashville Predators),
+Jake Guentzel (C, Pittsburgh Penguins).
 
 ***
 
