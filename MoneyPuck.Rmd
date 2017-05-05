@@ -987,7 +987,6 @@ Beyond that, David Pastrnak, of the Boston Bruins, came in second, being undercu
 
 The top ten most underpaid Forwards are listed below, in order of how much they were underpaid:
 
-
 Connor McDavid (C, Edmonton Oilers),
 David Pastrnak (RW, Boston Bruins),
 Leon Draisaitl (C, Edmonton Oilers),
@@ -998,6 +997,18 @@ Patrik Laine (RW, Winnipeg Jets),
 Auston Matthews (C, Toronto Maple Leafs),
 Viktor Arvidsson (LW, Nashville Predators),
 Jake Guentzel (C, Pittsburgh Penguins).
+
+On the other side, however, there is quite a bit of surprise. The most overpaid player, according to the data (with the exception of Ryan Callahan, who missed most of the season with injury) was Anze Kopitar, of the Los Angeles Kings. Kopitar is a three-time all star, and a two-time Stanley Cup champion. His Jeffrickas score was only about one standard deviation above the mean, whereas his salary of 10 million dollars a year was among the highest in the league. The model indicates he was only worth about 5 million or so this year.
+
+<br>
+
+![Toews(left) and Kopitar(right) are among the NHL stars who didn't live up to their salaries this year](/Users/Daniel/Desktop/ToewsKopitar.png)
+
+<br>
+
+Jonathan Toews, a former MVP and 2016-17 All Star selection, came in as the second most overpaid player. He got paid a lofty 10.5 million dollars this year, whereas his Jeffrickas score suggests he only about 6 million. He definitely has value, and sits among the top of the league. However, the Blackhawks are shelling out far too much cash for what they're getting at this point. Below are the top ten most overpaid in the NHL, in order of how much they're overpaid:
+
+Anze Kopitar (C, Los Angeles Kings), Jonathan Toews (C, Chicago Blackhawks), Carl Soderberg (C, Colorado Avalanche), Claude Giroux (C, Philadelphia Flyers), Tomas Plekanec (C, Montreal Canadiens), Zach Parise (LW, Minnesota Wild), Anton Blidh (LW, Boston Bruins), Bobby Ryan (RW, Ottawa Senators), Marian Gaborik (RW, Los Angeles Kings), Loui Eriksson (LW, Vancouver Canucks).
 
 ***
 
