@@ -584,3 +584,8 @@ cor(NHL_Goalies$GAA[Goalies], NHL_Goalies$WinPerc[Goalies])
 write.csv(NHL_Goalies, "/Users/Daniel/Documents/NHL_Goalies.csv")
 write.csv(NHL_Skaters, "/Users/Daniel/Documents/NHL_Skaters.csv")
 
+ResidualsFWD <- resid(lm(NHL_Skaters$Salary[Forward]~JeffrickasFWD))
+ResidualsDEF <- resid(lm(NHL_Skaters$Salary[Defender]~JeffrickasDEF))
+ResidualsGOL <- resid(lm(NHL_Goalies$Salary[Goalies]~JeffrickasGOL))
+
+lm(log(NHL_Skaters$Salary[Forward])~JeffrickasFWD)

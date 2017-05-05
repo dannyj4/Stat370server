@@ -567,6 +567,9 @@ cor(NHL_Goalies$Salary[Goalies], JeffrickasGOL)
 cor(NHL_Goalies$WinPerc[Goalies], JeffrickasGOL)
 cor(NHL_Goalies$GAA[Goalies], NHL_Goalies$WinPerc[Goalies])
 
+ResidualsFWD <- resid(lm(NHL_Skaters$Salary[Forward]~JeffrickasFWD))
+ResidualsDEF <- resid(lm(NHL_Skaters$Salary[Defender]~JeffrickasDEF))
+ResidualsGOL <- resid(lm(NHL_Goalies$Salary[Goalies]~JeffrickasGOL))
 
 ```
 
@@ -923,6 +926,39 @@ Holtby allowed only 2.07 goals per game, just a hair more than Grubauer. Holtby 
 Coming third in the rankings with a score of 6.07, was yet another backup, Anti Raanta of the New York Rangers. Raanta backs up the man widely believed to be the best Goalie in the league, Henrik Lundqvist. However, Lundqvist has underperformed this year, registering a -2.90 on the Jeffrickas scale. Raanta, in his time, stepped up to post a save percentage of 92.2% and allow only 2.26 goals per game (compared with Lundqvist's 2.74). While Lundqvist may remain in the conversation for best in the game, this year he was significantly outshown.
 
 The results for Goalie suggest two things. The first is that there are quite a few teams who are not starting their most effective Goalie. Given that both the Rangers and Capitals are in the midst of the Stanley Cup chase, it might be worthwhile for them to consider looking to their backups if they get into a rough situation. Second, for any team needing a Goalie this offseason, their best bet might be to look to other teams' backups to try and acquire solid, overlooked talent at a cheap price.
+
+***
+
+<br>
+
+##Most (and Least) Bang for Their Puck {.tabset .tabset-fade .tabset-pills}
+
+Now that we have a standard metric to gauge player value, and all salary data for these players, we can run tests and equations to see who are the most overpaid and underpaid players in the NHL. The first step is to graph Salary vs. Jeffrickas score for each position. Then, we run a simple linear regression to find the line of best fit to see what the predicted salary for each player should be based on their Jeffrickas score. Lastly, we can look at the discrepancies between predicted and actual salary (residuals) to determine who is the most overpaid and underpaid. 
+
+For Forwards, those graphs are shown below. 
+
+***
+
+<br>
+
+###Salary Regression
+```{r, comment = NA, null_prefix=TRUE}
+
+plot(NHL_Skaters$Salary[Forward]~JeffrickasFWD)
+abline(lm(NHL_Skaters$Salary[Forward]~JeffrickasFWD))
+
+```
+
+***
+
+<br>
+
+###Residuals
+```{r, comment = NA, null_prefix=TRUE}
+
+plot(ResidualsFWD)
+
+```
 
 ***
 
