@@ -589,3 +589,17 @@ ResidualsDEF <- resid(lm(NHL_Skaters$Salary[Defender]~JeffrickasDEF))
 ResidualsGOL <- resid(lm(NHL_Goalies$Salary[Goalies]~JeffrickasGOL))
 
 lm(log(NHL_Skaters$Salary[Forward])~JeffrickasFWD)
+
+DEF_Jeffrickas.z <- scale(JeffrickasDEF)
+DEF_Salary.z <- scale(NHL_Skaters$Salary[Defender])
+FWD_Jeffrickas.z <- scale(JeffrickasFWD)
+FWD_Salary.z <- scale(NHL_Skaters$Salary[Forward])
+GOL_Jeffrickas.z <- scale(JeffrickasGOL)
+GOL_Salary.z <- scale(NHL_Goalies$Salary[Goalies])
+
+DEF_MoneyPuck <- c(DEF_Salary.z - DEF_Jeffrickas.z)
+FWD_MoneyPuck <- c(FWD_Salary.z - FWD_Jeffrickas.z)
+GOL_MoneyPuck <- c(GOL_Salary.z - GOL_Jeffrickas.z)
+
+linear <- curve(x^1, from=-4, to=50, , xlab="x", ylab="y")
+ 
