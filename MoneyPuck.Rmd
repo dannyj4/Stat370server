@@ -1,7 +1,7 @@
 ---
 title: "MoneyPuck"
 author: "Dan Savickas"
-date: "5/3/2017"
+date: "5/6/2017"
 output:
   html_document:
     toc: yes
@@ -932,7 +932,7 @@ Holtby allowed only 2.07 goals per game, just a hair more than Grubauer. Holtby 
 
 ***
 
-![](/Users/Daniel/Desktop/Anti_Raanta4.png)
+![Anti Raanta of the New York Rangers](/Users/Daniel/Desktop/Anti_Raanta4.png)
 
 ***
 
@@ -1009,6 +1009,70 @@ On the other side, however, there is quite a bit of surprise. The most overpaid 
 Jonathan Toews, a former MVP and 2016-17 All Star selection, came in as the second most overpaid player. He got paid a lofty 10.5 million dollars this year, whereas his Jeffrickas score suggests he only about 6 million. He definitely has value, and sits among the top of the league. However, the Blackhawks are shelling out far too much cash for what they're getting at this point. Below are the top ten most overpaid in the NHL, in order of how much they're overpaid:
 
 Anze Kopitar (C, Los Angeles Kings), Jonathan Toews (C, Chicago Blackhawks), Carl Soderberg (C, Colorado Avalanche), Claude Giroux (C, Philadelphia Flyers), Tomas Plekanec (C, Montreal Canadiens), Zach Parise (LW, Minnesota Wild), Anton Blidh (LW, Boston Bruins), Bobby Ryan (RW, Ottawa Senators), Marian Gaborik (RW, Los Angeles Kings), Loui Eriksson (LW, Vancouver Canucks).
+
+On the defensive end, the most underpaid Defenseman is Jaccob Slavin of the Carolina Hurricanes. Slavin finished 13th amongst all defenders with 161 blocks in the 2016-17 season. Also of note is that Slavin finished the year with a +/- of 23, despite the Carolina team average being -4.29. Slavin's Jeffrickas shows he was worth about 7 million dollars this season, but was only paid $832,500. This is not entirely shocking, as Slavin is only 22.
+
+Following Slavin is Justin Schultz of the Pittsburgh Penguins. Schultz finished with a lofty +/- of 27, and scored 51 points, significantly above average for Defenders. While Schultz got paid 1.4 million this season, he was actually worth about 7.5 million.
+
+<br>
+
+![Veteran Dennis Seidenberg far outplayed his value this season](/Users/Daniel/Desktop/Seidenberg.png)
+
+<br>
+
+The man who finished third produces quite an interesting narrative, however. Almost all of the players who rated as severely underpaid (for both Forwards and Defensemen) were very young players who had a breakout year, or whose salaries were restricted by the rookie maximum imposed by the NHL Collective Bargaining Agreement. However, the 35 year old Dennis Seidenberg of the New York Islanders rates as the third most underpaid Defensman. Seidenberg is in his 15th season, playing for his 6th NHL team. Despite this, Seidenberg is only paid 1 million dollars per season. Conversely, he finished over 2 standard deviations above the mean in the Jeffrickas index. This indicates he should have been paid just under 6 million. Seidenberg remained physical, lodging a large number of blocked shots and hits, and a high +/- of 25. He is producing at quite a high level in the twilight of his career.
+
+Rounding out the top 5 most underpaid Defensemen are Brett Pesce of the Carolina Hurricanes, and Zach Werenski of the Columbus Blue Jackets.
+
+On the other hand, there are defenders like the Buffalo Sabres' Dmitry Kulikov. Kulikov got paid a cool 4.5 million this season, despite only posting a grand total of 5 points in 47 games. He average less than one shot per game. His Jeffrickas is so low, it actually indicates he should have to pay the Sabres to play for them. He was worth negative money this season.
+
+Finishing just behind Kulikov in the race to be the most egregiously overpaid Defenseman is the highest paid defender in the league, PK Subban of the Nashville Predators. According to the Jeffrickas index, Subban was only very marginally above average for a Defender. Despite this, he gets paid a hefty 9 million dollars. His play this season, however, was only worth about 3.3 million.
+
+Travis Hamonic, of the New York Islanders, Zach Bogosian, of the Buffalo Sabres, and Oliver Ekman-Larsson, of the Arizona Coyotes, complete the top 5 most overpaid Defensemen.
+
+<br>
+
+![PK Subban did not nearly live up to his title of highest paid Defenseman](/Users/Daniel/Desktop/PKSubban4.png)
+
+<br>
+
+Goalies are a completely different animal altogether. As you can see in the graph below, a Goalie's salary does not appear to be, in any way, related to his value in the Jeffrickas index. In the same way, in the earlier graph, many Goalies fell far off the line that shows expected salary. The way NHL Goalies are paid, at least for this season, makes very little sense.
+
+```{r, comment = NA, null_prefix=TRUE}
+
+plot(JeffrickasGOL,NHL_Goalies$Salary[Goalies])
+
+```
+
+Of the 60 Goalies who factored into this analysis, 15 of them were overpaid or underpaid by over 5 million dollars. Regardless of whether or not you think the Jeffrickas index is a reliable metric for player value, it cannot be denied that the NHL is pretty poor at gauging the monetary value of their Goalies. 
+
+The most overpaid Goalie, by quite a wide margin, is Henrik Lundqvist, of the New York Rangers. Lundqvist, at probably any other point in his career, would score very well on this index. However, this year, he had a very subpar season combined with the highest salary amongst Goalies. He allowed 2.74 goals per game, and only had two shutouts. Getting paid 9.5 million, Lundqvist's season was only worth 1.15 million. 
+
+<br>
+
+![Henrik Lundqvist was the "King" of getting overpaid this NHL season](/Users/Daniel/Desktop/Lundqvist.png)
+
+<br>
+
+Following Lundqvist, albeit by a wide margin, is Semyon Varlamov, of the Colorado Avalanche, who was paid 6 million despite posting an abysmal 3.38 goals per game average and a sub-90% save percentage. In third, came NHL veteran, Roberto Luongo, of the Florida Panthers. His season was worth just a little less than half a million dollars, while he was paid over 6.7 million. 
+
+Among the other Goaltenders who were badly overpaid are Mike Smith (Arizona Coyotes), Marc-Andre Fleury (Pittsburgh Penguins), Antti Niemi (Dallas Stars), and Ryan Miller (Vancouver Canucks).
+
+It was already well-established that two of the three best Goalies in the league are backups (Philip Grubauer and Anti Raanta). Naturally, those two are the most underpaid goalies in the league. Grubauer's season was worth about 9.4 million dollars, but he was only paid a lowly 832,500. Raanta was worth just a hair over 8 million while being paid just 1 million. 
+
+Backup Goalies were certainly not done beyond these two, though. The next two Goalies on the underpaid scale are also backups. Carter Hutton of the St. Louis Blues posted a respectable 2.39 Goals Against Average and a 91.3% save percentage. However, where Hutton made his mark was in shutouts. Hutton had shutouts in an incredible 19% of his starts. All in all, Hutton was worth 7.8 million, and was only paid 1.25 million.
+
+<br>
+
+![Sharks backup, Aaron Dell, had quite possibly the best season of any NHL Goalie](/Users/Daniel/Desktop/AaronDell.png)
+
+<br>
+
+Aaron Dell, the backup for the San Jose Sharks, quietly had himself an incredible season. He posted a league low in goals per game with a flat 2.00. Not only that, he had a league high save percentage of 93.1%. He had a quality start in 70.6% of his starts, also a league high. Dell's mind-blowing season was worth just under 7 million dollars. However, he was paid a league low for Goalies with only 575,000 dollars in salary this season.
+
+Below are the rest of the most underpaid Goalies in the NHL this season. Of them, Budaj and Condon are also backups.
+
+John Gibson (Anaheim Ducks), Peter Budaj (Tampa Bay Lightning), Mike Condon (Ottawa Senators), Matthew Murray (Pittsburgh Penguins).
 
 ***
 
