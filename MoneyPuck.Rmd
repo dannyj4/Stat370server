@@ -1076,9 +1076,13 @@ John Gibson (Anaheim Ducks), Peter Budaj (Tampa Bay Lightning), Mike Condon (Ott
 
 ***
 
+## Correlation Plots {.tabset .tabset-fade .tabset-pills}
+
 <br>
 
-## Correlation Plots {.tabset .tabset-fade .tabset-pills}
+Below are two plots to show how well each statistic correlates with each other statistic. A darker, larger bubble indicates higher correlation, whereas a smaller, lighter one indicates low correlation.
+
+<br>
 
 ### Skaters
 ```{r, comment = NA, null_prefix=TRUE}
@@ -1093,5 +1097,13 @@ corrplot(Skaters.Cor, method = "circle") #plot matrix
 corrplot(Goalies.Cor, method = "circle") #plot matrix
 ```
 
+<br>
 
+##Conclusion
+
+As with any sport, there are always going to be players who overperform, and those who underperform. However, the data shows that there are definitive discrepancies, and clear ways that teams can maximize their money to build the best, most efficient team possible. The first possible way, is to invest in youth. The data overwhelmingly shows that the most underpaid players are generally young players. A team could throw money comprable to the league minimum at young players in hopes of striking it rich. Data shows they will at least get a decent return on their investment. The second would be to find, and invest in a long-term journeyman, like Dennis Seidenberg. He won't be the most dominant player, but he would give consistently above average production over a long career.
+
+For Goalies, whose salary, at times, seemed to make absolutely no sense, the answer is clear. Backups generally produce way more value in net. Teams in search of a decent Goalie are far better suited pursuing a current backup (or, in more than a few cases, turning to their own), who they could acquire cheaply and get solid production out of. Another solution for teams in Goalie trouble would be to institute a more equitable timeshare between their Goalies. For example, a split tandem of Philip Grubauer and Aaron Dell would have produced great value this year, and would have only cost 1.4 million. Sergei Bobrovsky, of the Columbus Blue Jackets, was brilliant this year, but his value and efficiency across an entire season does not equal that of more that of a well-put-together combination of former backups. Either of these systems would be far more effective in solving goaltending woes than throwing Henrik Lundqvist-type money at a Goalie. As we saw this year, it doesn't always work out as well as a team might hope.
+
+Freeing up money by investing in young players, and Goalie timeshares would make a team more effective, and would free up a lot of salary room to allow a team to comfortably take a chance on one or two star players in the mold of Sidney Crosby or Alex Ovechkin. A solid statistical analysis could be the front office's guide to producing a ridiculously efficient super-team.
 
