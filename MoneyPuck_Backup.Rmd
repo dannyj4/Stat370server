@@ -1,0 +1,1166 @@
+---
+title: "MoneyPuck"
+author: "Dan Savickas"
+date: "5/6/2017"
+runtime: shiny
+output:
+  html_document:
+    toc: yes
+    toc_float: yes
+subtitle: A Statistical Examination of Player Quality in the NHL
+---
+
+![](/Users/Daniel/Desktop/NHL_Logo3.png)
+
+##Abstract
+
+If any professional sports league draws little or no attention to contract details, it is the NHL. The league receives paltry coverage in the media and is generally regarded as the least popular of the major sports in the United States. Thus, poorly drawn up contracts, grossly overpaid and underpaid players, and dark horses generally fly under the radar to the casual fan. However, even a brief analysis of the data suggests that there is a significant discrepancy between the players that produce wins for their team, and those that are the most highly paid. Of course, there is the unquantifiable star power factor to consider, but for the purposes of winning games, NHL front offices appear to be off-base. In the spirit of the sabermetrics that revolutionized the MLB, and produced the Oscar-nominated picture, "MoneyBall", this inquiry is an effort to develop an algorithm that more accurately reflects player value, than any existing metric. This metric is based off of data from the 2016-17 NHL Season.
+
+##Acknowledgements
+
+Special thanks are owed to Professor Sean Carver, PhD, of American University, for providing guidance and his own knowledge of RStudio, which greatly contributed to this final product. Also providing invaluable assistance in this inquiry was Paul Jeffries, an American University student, and financial engineer at Fannie Mae. Statistics referenced were pulled from hockey-reference .com and salary data from sportrac. com.
+
+##Definitions
+
+For this data, a Goalie was defined as an NHL Goaltender who started at least 12 games in the 2016-17 season. Likewise, a Skater was defined as a Forward or Defenseman who played in at least one-fifth (16) of his team's games in the 2016-17 season. This data, these tests, and the value estimations for these players only reflect that of the 2016-17 season. 
+
+***
+
+```{r setup, include=FALSE, comment = NA}
+knitr::opts_chunk$set(echo = FALSE)
+
+# A Prefix nulling hook.
+
+# Make sure to keep the default for normal processing.
+default_output_hook <- knitr::knit_hooks$get("output")
+
+# Output hooks handle normal R console output.
+knitr::knit_hooks$set( output = function(x, options) {
+
+  comment <- knitr::opts_current$get("comment")
+  if( is.na(comment) ) comment <- ""
+  can_null <- grepl( paste0( comment, "\\s*\\[\\d?\\]" ),
+                     x, perl = TRUE)
+  do_null <- isTRUE( knitr::opts_current$get("null_prefix") )
+  if( can_null && do_null ) {
+    # By default R print output aligns at the right brace.
+    align_index <- regexpr( "\\]", x )[1] - 1
+    # Two cases: start or newline
+    re <- paste0( "^.{", align_index, "}\\]")
+    rep <- comment
+    x <- gsub( re, rep,  x )
+    re <- paste0( "\\\n.{", align_index, "}\\]")
+    rep <- paste0( "\n", comment )
+    x <- gsub( re, rep,  x )
+  }
+
+  default_output_hook( x, options )
+
+})
+
+knitr::opts_template$set("kill_prefix"=list(comment=NA, null_prefix=TRUE))
+
+library(readr)
+library(corrplot)
+library(shiny)
+library(shinydashboard)
+NHL_Skaters <- read_csv("~/Stat370server/NHL_Stats.csv")
+View(NHL_Skaters)
+##Skaters
+
+NHL_Goalies <- read_csv("~/Stat370server/NHL_Stats_Goalies.csv")
+View(NHL_Goalies)
+##Goalies
+
+summary(NHL_Skaters)
+summary(NHL_Goalies)
+##Summary Statistics by position
+
+'+/-mean' <- (mean(NHL_Skaters$`+/-`))
+'+/-sd' <- (sd(NHL_Skaters$`+/-`))
+##Coding mean and SD for single variables, in this case +/-
+
+z.score <- function(x){
+  (x-mean(x))/sd(x)
+}
+##Coding z-score as a function
+
+z.score(NHL_Skaters$`+/-`)
+##Using that function to create z-scores for a single variable
+
+scale(NHL_Skaters$`+/-`)
+##Different code to find the z-scores of a variable
+
+
+NHL_Skaters$Salary <- c(0.6, 0.675, 0.8325, 0.8325, 0.8325, 0.8325, 0.775, 2.6, 0.8325, 1.7,
+                           0.9, 3.25, 1, 0.8325, 0.7, 0.65, 0.8325, 0.66, 4, 0.575, 0.825,
+                           3, 5, 1.75, 0.8325, 3.1, 4, 3, 3.8, 6, 7.875, 9.25, 3.2, 0.65,
+                           0.8325, 0.874125, 0.95, 0.8075, 0.675, 0.725, 1, 2.25, 0.8325,
+                           0.8325, 0.8325, 2.4, 3, 0.8325, 0.8325, 0.625, 2.5, 0.7, 2, 5.375,
+                           0.8325, 6, 1, 0.8325, 0.675, 0.7, 0.8075, 0.8, 0.6, 0.6, 0.7, 2,
+                           2, 0.8, 4, 3, 2.5, 0.75, 0.9, 0.6, 0.625, 0.9, 0.75, 0.9, 5, 5,
+                           1.1, 4, 8.75, 7.25, 0.8325, 5, 0.65, 0.8325, 0.575, 0.575, 0.575,
+                           0.8325, 0.6, 0.7, 0.8325, 0.8325, 0.775, 0.6, 0.65, 4.5, 3.9, 0.75,
+                           0.6, 0.65, 0.6525, 5.25, 0.95, 2.65, 1.15, 2, 1.25, 2.25, 3, 2,
+                           6, 5.4, 6, 0.8325, 7.5, 0.8325, 0.7, 0.6, 0.65, 0.65, 0.575, 0.635,
+                           4.5, 0.6, 0.75, 0.95, 0.675, 0.75, 0.775, 1.1, 1.25, 0.8, 0.7,
+                           0.8325, 0.6, 0.8325, 5.5, 2.5, 0.8325, 2.5, 6, 4, 0.8325, 6, 0.6,
+                           0.8325, 0.8325, 0.65, 0.6325, 0.7, 2.825, 0.6, 0.6, 2.2, 5, 3.5,
+                           1, 0.687333, 2.9, 5, 5.85, 5.4, 0.8325, 0.65, 5.5, 5.75, 0.925,
+                           3.5, 0.625, 0.7, 0.8325, 0.575, 0.65, 0.8325, 0.6125, 0.575, 0.6,
+                           0.65, 2.2, 2.75, 6, 3, 0.8, 4.5, 0.95, 0.8325, 4.8375, 0.95, 4.75,
+                           5, 0.8325, 5.5, 3.575, 6.5, 3.75, 0.575, 0.8, 0.6, 0.75, 0.8325,
+                           0.675, 0.8325, 0.6075, 0.575, 0.575, 0.75, 0.575, 2, 1.5, 3.6,
+                           0.8325, 0.8325, 6.875, 0.875, 4.55, 4, 6, 10.5, 0.8325, 10.5,
+                           0.874125, 0.575, 0.8, 0.8325, 0.675, 1.65, 0.8325, 0.575, 0.8,
+                           0.8325, 1.9, 2.5, 0.8325, 0.8, 2, 4.75, 6, 4.5, 0.65, 2.4, 1.3,
+                           5.5, 5, 0.8325, 6, 5, 0.6, 0.8325, 0.625, 0.8325, 0.9, 0.8325,
+                           0.67, 0.675, 4, 0.91875, 0.65, 2, 3.65, 3.5, 0.625357, 0.6, 0.71,
+                           5, 0.875, 2.2, 0.8325, 0.775, 2.5, 7.5, 5.75, 6, 0.8325, 0.6,
+                           0.6, 0.65, 0.6, 0.575, 0.6, 0.575, 0.575, 0.6, 1.025, 4, 0.715,
+                           4, 1.875, 5.5, 0.6, 0.675, 4, 5, 0.575, 0.8325, 6, 0.8325, 5, 2.75,
+                           4.25, 7.75, 0.925, 0.585, 0.8325, 3.5, 1.05, 0.725, 0.95, 1.85,
+                           0.8325, 0.8325, 0.8325, 0.725, 3.1, 4, 0.8325, 0.8325, 3, 1.5,
+                           6.5, 1.8, 3, 2, 6, 6, 6, 0.8325, 0.8325, 0.705, 0.8325, 0.575,
+                           0.8325, 0.65, 3, 0.6, 0.8325, 0.575, 1.2, 3.35, 1.3, 1.25, 0.8325,
+                           0.8325, 0.95, 4, 3.5, 4, 3.5, 6.35, 4, 0.75, 4.5, 3.75, 1.6,
+                           0.8325, 0.6, 2.5, 1.55, 1.4, 0.8325, 0.575, 0.925, 1, 0.575, 1.25,
+                           0.6, 0.65, 6.075, 0.63, 2, 4, 3.9, 7, 3.9, 7.45, 0.735833, 10,
+                           7, 0.8325, 0.64, 0.6, 0.65, 0.65, 0.8325, 0.925, 0.6, 0.65, 0.8325,
+                           0.85, 0.6, 3.75, 0.65, 1.2, 4, 1.05, 2.375, 4.25, 9, 9, 6.25, 2,
+                           2.6, 2.66667, 5.4, 3.5, 3.2, 0.8325, 0.55, 0.6, 0.6, 0.575, 0.8325,
+                           0.8325, 0.575, 0.6, 0.575, 0.8325, 0.625, 4.2, 0.95, 1.3, 1, 6,
+                           7, 0.8325, 4.5, 3, 4.25, 0.875, 7.857143, 1, 2.85, 5.75, 5, 0.635,
+                           0.575, 0.625, 0.8325, 0.7, 0.675, 0.6, 0.6, 0.575, 0.75, 0.8, 0.7,
+                           1, 2.5, 0.8325, 0.75, 0.625, 1.25, 1.1, 5, 0.8325, 0.725, 1.75,
+                           0.8325, 0.6, 5, 4.5, 6.5, 6, 4.5, 0.575, 0.575, 0.575, 0.575, 0.65,
+                           0.575, 0.575, 0.6, 0.575, 1.833333, 0.8425, 0.575, 0.6125, 0.575,
+                           0.575, 0.575, 0.8325, 0.575, 3, 3.5, 4, 2, 4, 2.5, 9, 5, 4, 4.25,
+                           6, 6, 0.575, 0.8325, 0.8, 0.575, 0.8325, 0.575, 0.575, 0.8325,
+                           0.8325, 4.875, 0.575, 0.8, 2.2, 3.5, 1, 7, 4.25, 0.8325, 2.5, 2.5,
+                           2, 5.5, 2, 2.5, 4.5, 3.5, 3.7, 6, 0.65, 0.6, 0.6, 1, 5, 0.6, 2.75,
+                           5, 1.1, 0.7, 0.8325, 1, 0.8325, 1.65, 3.25, 8, 0.8325, 1.65, 4.7,
+                           2.1, 4, 8, 2.5, 4.5, 0.925, 0.7, 0.75, 0.6, 0.65, 4.5, 0.575, 0.65,
+                           0.575, 0.8325, 0.725, 0.874125, 1.1, 1.5, 0.7, 4.9, 0.9, 2.25,
+                           0.8, 0.8, 7, 6.5, 0.75, 2.35, 1.1, 4, 3.75, 4, 3.8, 7, 0.925,
+                           0.8325, 0.8325, 0.8325, 0.625, 0.95, 0.76815, 2.25, 0.8325, 0.725,
+                           2.35, 0.85, 0.65, 0.725, 2.75, 0.84, 4.75, 4, 4, 3.35, 0.8325,
+                           0.8325, 2, 0.8325, 4.3, 5.125, 9, 4.25, 0.7, 0.8325, 0.575, 0.575,
+                           0.575, 0.575, 0.12776, 0.575, 0.6675, 0.575, 4.083, 0.575, 0.575,
+                           0.8, 0.625, 2.7, 3.667, 2.3, 0.59, 0.62, 3.85, 1, 0.575, 7.25,
+                           2.1, 4.75, 1.4, 0.575, 7, 9.5, 10.9, 0.675, 0.575, 0.7, 0.8325,
+                           0.925, 0.6, 0.8325, 0.6, 2.75, 0.625, 3.8, 0.8325, 2.25, 0.575,
+                           2.8, 1.85, 0.7, 5, 5.2, 4.25, 3, 6.5, 6.75, 6, 6, 5.76, 0.575,
+                           0.6, 2.725, 0.575, 0.8325, 0.575, 1.05, 2.9, 2.5, 1, 0.65, 1.125,
+                           0.7, 5.6, 0.9, 1, 0.9, 4.4, 0.8325, 3.7, 0.8325, 7, 3.75, 7,
+                           6.5, 5.25, 8, 0.575, 1.25, 0.8325, 0.575, 0.575, 0.8325, 0.575,
+                           0.8325, 0.575, 0.575, 6.5, 1.25, 0.6, 3.6, 0.8, 0.615, 3.7, 1.6,
+                           8.5, 4.5, 1.9, 4.45, 0.575, 4, 4, 0.8325, 4.25, 4.25, 0.8325,
+                           4, 0.8325, 1.2, 0.65, 0.65, 2.5, 0.575, 2.25, 1.2, 5, 0.925,
+                           2.95, 0.8325, 0.65, 4.05, 4.2, 0.8325, 0.8325, 4.5, 5, 0.8325,
+                           0.575, 0.6, 0.65, 0.8, 0.95, 0.65, 0.625, 0.8125, 0.296102,
+                           0.8325, 0.650, 0.20556, 0.675, 1.25, 0.625, 0.27776, 0.2, 0.6,
+                           1.25, 0.17776, 0.7, 0.14224, 1.1, 0.7825, 0.574986, 0.6, 3.75,
+                           2.75, 0.9, 0.7425, 0.715, 0.6, 2, 0.6, 1.3, 2.6, 0.8, 0.735,
+                           2.8, 4, 1.25, 1.55, 1, 2.1, 1.5, 0.725, 2.5, 1.1, 1, 2, 4.35,
+                           0.335843, 2, 2.501625, 2.75, 1.25, 4.5, 3.5, 5, 1.3, 1, 4.25,
+                           0.6325, 0.575, 0.8325, 0.575, 0.6, 0.575, 0.8325, 0.95, 0.6, 0.7,
+                           2.5, 0.8325, 0.8325, 1.025, 3.5, 0.6, 0.6, 0.925, 0.7, 3.5, 3.1,
+                           0.8325, 5, 0.8325, 6, 0.85, 3.3, 1.5, 7, 7, 0.8325, 0.8325, 0.575,
+                           0.65, 0.6, 0.6, 0.874125, 2.7, 1.2, 5, 0.8325, 0.8325, 0.85,
+                           2.125, 0.75, 0.925, 5.75, 0.8325, 0.875, 0.8325, 1, 2.5, 3, 5,
+                           7, 0.8325, 0.8325, 5.8, 5, 0.8425, 0.575, 0.575, 0.575, 0.575,
+                           0.575, 0.775, 0.8325, 2.8, 5.5, 0.875, 1.75, 0.85, 2, 4.25, 1.75,
+                           2.75, 0.8325, 4, 5.75, 3.25, 4.5, 4.25, 3.4, 10, 7)
+##Salary Data for all skaters
+
+NHL_Goalies$Salary <- c(0.6, 1.5, 4.15, 6.5, 0.6, 0.6, 1, 0.8325, 7.5, 0.8325, 1.2, 0.8,
+                           1, 3.15, 3.5, 0.7, 0.7, 2.55, 0, 0.7, 0.65, 8.5, 0.8325, 1.7,
+                           0.8325, 2.7, 0.6, 6, 6, 0.675, 0.925, 0.65, 4.5, 6, 3.85, 5.5,
+                           0.575, 4.166666, 0.8, 0.75, 5, 6.714, 1.5, 0.9, 7, 0.575, 0.65,
+                           1.55, 5, 7, 0.95, 0.8325, 6, 0.75, 0.575, 7, 0.575, 4.75, 2, 0.675,
+                           1, 9.5, 0.6, 1.35, 0.78, 4.75, 0.725, 1.75, 4.1, 0.575, 0.55,
+                           5.75, 3, 0.575, 1.25, 0.70875, 2.2, 0.8325, 0.575, 0.75, 0.68,
+                           5, 0.8, 0.575, 0.6, 5.95, 6, 1.6, 0.575, 4.75, 1, 0.6925, 0.575,
+                           7, 0.85)
+##Salary Data for all goalies
+
+##Summary Stats for both sets of salary data
+
+NHL_Skaters$TmPoints <- c(105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105,
+                             105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105, 105,
+                             105, 105, 105, 105, 105, 105, 105, 70, 70, 70, 70, 70, 70, 70,
+                             70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70,
+                             70, 70, 70, 95, 95, 95, 95, 95, 95, 95, 95, 95, 95, 95, 95,
+                             95, 95, 95, 95, 95, 95, 95, 95, 95, 95, 95, 95, 95, 95, 95,
+                             95, 95, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78,
+                             78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78,
+                             78, 78, 78, 78, 78, 78, 87, 87, 87, 87, 87, 87, 87, 87, 87,
+                             87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87,
+                             87, 87, 87, 87, 108, 108, 108, 108, 108, 108, 108, 108, 108,
+                             108, 108, 108, 108, 108, 108, 108, 108, 108, 108, 108, 108,
+                             108, 108, 108, 94, 94, 94, 94, 94, 94, 94, 94, 94, 94, 94,
+                             94, 94, 94, 94, 94, 94, 94, 94, 94, 94, 94, 94, 94, 94, 94, 94,
+                             109, 109, 109, 109, 109, 109, 109, 109, 109, 109, 109, 109,
+                             109, 109, 109, 109, 109, 109, 109, 109, 109, 109, 109, 109, 
+                             109, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48,
+                             48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 79, 79, 79,
+                             79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79,
+                             79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79,
+                             79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79, 79,
+                             79, 79, 79, 79, 79, 79, 103, 103, 103, 103, 103, 103, 103,
+                             103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103,
+                             103, 103, 103, 103, 103, 103, 103, 103, 81, 81, 81, 81, 81,
+                             81, 81, 81, 81, 81, 81, 81, 81, 81, 81, 81, 81, 81, 81, 81,
+                             81, 81, 81, 81, 81, 86, 86, 86, 86, 86, 86, 86, 86, 86, 86,
+                             86, 86, 86, 86, 86, 86, 86, 86, 86, 86, 86, 86, 86, 86, 86,
+                             106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106,
+                             106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106, 106,
+                             106, 106, 106, 106, 103, 103, 103, 103, 103, 103, 103, 103,
+                             103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103, 103,
+                             103, 103, 103, 103, 103, 103, 103, 103, 70, 70, 70, 70, 70,
+                             70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70,
+                             70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 94, 94, 94, 94, 94,
+                             94, 94, 94, 94, 94, 94, 94, 94, 94, 94, 94, 94, 94, 94, 94,
+                             94, 94, 94, 94, 94, 94, 94, 94, 94, 94, 94, 94, 94, 94, 94,
+                             94, 94, 94, 94, 94, 94, 94, 94, 94, 94, 94, 94, 94, 94, 94,
+                             94, 94, 94, 94, 94, 94, 94, 94, 102, 102, 102, 102, 102, 102,
+                             102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102, 102,
+                             102, 102, 102, 102, 102, 102, 98, 98, 98, 98, 98, 98, 98, 98,
+                             98, 98, 98, 98, 98, 98, 98, 98, 98, 98, 98, 98, 98, 98, 98,
+                             98, 98, 98, 98, 98, 98, 98, 88, 88, 88, 88, 88, 88, 88, 88,
+                             88, 88, 88, 88, 88, 88, 88, 88, 88, 88, 88, 88, 88, 88, 88,
+                             88, 88, 88, 88, 88, 111, 111, 111, 111, 111, 111, 111, 111,
+                             111, 111, 111, 111, 111, 111, 111, 111, 111, 111, 111, 111,
+                             111, 111, 111, 111, 111, 111, 111, 111, 111, 111, 111, 99, 99,
+                             99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99,
+                             99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99,
+                             99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99,
+                             99, 99, 99, 94, 94, 94, 94, 94, 94, 94, 94, 94, 94, 94, 94, 94,
+                             94, 94, 94, 94, 94, 94, 94, 94, 94, 94, 94, 94, 94, 94, 94, 95,
+                             95, 95, 95, 95, 95, 95, 95, 95, 95, 95, 95, 95, 95, 95, 95, 95,
+                             95, 95, 95, 95, 95, 94.3, 103, 102.6, 82.7, 93, 92.55, 99.9, 94,
+                             103, 71, 80.28, 96.5, 91.2, 78, 82.6, 89, 97.6, 97.75, 72, 85,
+                             85.3, 55, 84.3, 111.7, 95, 87, 85, 87, 100.5, 99, 71.2, 81.5,
+                             110.9, 77, 72.5, 98.5, 73.5, 61, 103, 77, 80, 78, 80, 89, 89.7,
+                             97, 92.5, 83.5, 83, 79, 90.5, 81, 94.3, 94, 57, 73, 74.5, 79.5,
+                             90, 80.5, 85.5, 103.5, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69,
+                             69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69, 69,
+                             69, 69, 69, 69, 69, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87,
+                             87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87, 87,
+                             87, 118, 118, 118, 118, 118, 118, 118, 118, 118, 118, 118, 118,
+                             118, 118, 118, 118, 118, 118, 118, 118, 118, 118, 118, 118, 118,
+                             118)
+##Points (standings) for each player's team
+##Players who played for more than one got the weighted average depending on how many games
+##they played for each
+
+NHL_Skaters$TmAvgPlusMinus <- c(2.72, 2.72, 2.72, 2.72, 2.72, 2.72, 2.72, 2.72, 2.72, 2.72, 2.72, 2.72, 2.72, 2.72, 2.72, 
+                              2.72, 2.72, 2.72, 2.72, 2.72, 2.72, 2.72, 2.72, 2.72, 2.72, 2.72, 2.72, 2.72, 2.72, 2.72, 
+                              2.72, 2.72, -7.52, -7.52, -7.52, -7.52, -7.52, -7.52, -7.52, -7.52, -7.52, -7.52, -7.52, 
+                              -7.52, -7.52, -7.52, -7.52, -7.52, -7.52, -7.52, -7.52, -7.52, -7.52, -7.52, -7.52, -7.52, 
+                              -7.52, 0.31, 0.31, 0.31, 0.31, 0.31, 0.31, 0.31, 0.31, 0.31, 0.31, 0.31, 0.31, 0.31, 0.31, 
+                              0.31, 0.31, 0.31, 0.31, 0.31, 0.31, 0.31, 0.31, 0.31, 0.31, 0.31, 0.31, 0.31, 0.31, 0.31,
+                              -5.29, -5.29, -5.29, -5.29, -5.29, -5.29, -5.29, -5.29, -5.29, -5.29, -5.29, -5.29, -5.29, 
+                              -5.29, -5.29, -5.29, -5.29, -5.29, -5.29, -5.29, -5.29, -5.29, -5.29, -5.29, -5.29, -5.29, 
+                              -5.29, -5.29, -5.29, -5.29, -5.29, -5.29, -5.29, -5.29, -4.29, -4.29, -4.29, -4.29, -4.29, 
+                              -4.29, -4.29, -4.29, -4.29, -4.29, -4.29, -4.29, -4.29, -4.29, -4.29, -4.29, -4.29, -4.29, 
+                              -4.29, -4.29, -4.29, -4.29, -4.29, -4.29, -4.29, -4.29, -4.29, -4.29, 8.88, 8.88, 8.88, 
+                              8.88, 8.88, 8.88, 8.88, 8.88, 8.88, 8.88, 8.88, 8.88, 8.88, 8.88, 8.88, 8.88, 8.88, 8.88, 
+                              8.88, 8.88, 8.88, 8.88, 8.88, 8.88, -0.59, -0.59, -0.59, -0.59, -0.59, -0.59, -0.59, -0.59, 
+                              -0.59, -0.59, 
+                              -0.59, -0.59, -0.59, -0.59, -0.59, -0.59, -0.59, -0.59, -0.59, -0.59, -0.59, -0.59, -0.59, 
+                              -0.59, -0.59, -0.59, -0.59, 6.72, 6.72, 6.72, 6.72, 6.72, 6.72, 6.72, 6.72, 6.72, 6.72, 
+                              6.72, 6.72, 6.72, 6.72, 6.72, 6.72, 6.72, 6.72, 6.72, 6.72, 6.72, 6.72, 6.72, 6.72, 6.72, 
+                              -13.85, -13.85, -13.85, -13.85, -13.85, -13.85, -13.85, -13.85, -13.85, -13.85, -13.85, 
+                              -13.85, -13.85, -13.85, -13.85, -13.85, -13.85, -13.85, -13.85, -13.85, -13.85, -13.85, 
+                              -13.85, -13.85, -13.85, -13.85, -3.04, -3.04, -3.04, -3.04, -3.04, -3.04, -3.04, -3.04, 
+                              -3.04, -3.04, -3.04, -3.04, -3.04, -3.04, -3.04, -3.04, -3.04, -3.04, -3.04, -3.04, -3.04, 
+                              -3.04, -3.04, -3.04, -3.04, -3.04, -6.43, -6.43, -6.43, -6.43, -6.43, -6.43, -6.43, -6.43,
+                              -6.43, -6.43, -6.43, -6.43, -6.43, -6.43, -6.43, -6.43, -6.43, -6.43, -6.43, -6.43, -6.43,
+                              -6.43, -6.43, -6.43, -6.43, -6.43, -6.43, -6.43, 3.67, 3.67, 3.67, 3.67, 3.67, 3.67, 3.67,
+                              3.67, 3.67, 3.67, 3.67, 3.67, 3.67, 3.67, 3.67, 3.67, 3.67, 3.67, 3.67, 3.67, 3.67, 3.67,
+                              3.67, 3.67, 3.67, 3.67, 3.67, -6.88, -6.88, -6.88, -6.88, -6.88, -6.88, -6.88, -6.88, -6.88,
+                              -6.88, -6.88, -6.88, -6.88, -6.88, -6.88, -6.88, -6.88, -6.88, -6.88, -6.88, -6.88, -6.88,
+                              -6.88, -6.88, -6.88, -2.6, -2.6, -2.6, -2.6, -2.6, -2.6, -2.6, -2.6, -2.6, -2.6, -2.6, -2.6,
+                              -2.6, -2.6, -2.6, -2.6, -2.6, -2.6, -2.6, -2.6, -2.6, -2.6, -2.6, -2.6, -2.6, 8.64, 8.64,
+                              8.64, 8.64, 8.64, 8.64, 8.64, 8.64, 8.64, 8.64, 8.64, 8.64, 8.64, 8.64, 8.64, 8.64, 8.64,
+                              8.64, 8.64, 8.64, 8.64, 8.64, 8.64, 8.64, 8.64, 8.64, 8.64, 8.64, 4.32, 4.32, 4.32, 4.32,
+                              4.32, 4.32, 4.32, 4.32, 4.32, 4.32, 4.32, 4.32, 4.32, 4.32, 4.32, 4.32, 4.32, 4.32, 4.32,
+                              4.32, 4.32, 4.32, 4.32, 4.32, 4.32, 4.32, 4.32, 4.32, -8.13, -8.13, -8.13, -8.13, -8.13,
+                              -8.13, -8.13, -8.13, -8.13, -8.13, -8.13, -8.13, -8.13, -8.13, -8.13, -8.13, -8.13, -8.13,
+                              -8.13, -8.13, -8.13, -8.13, -8.13, -8.13, -8.13, -8.13, -8.13, -8.13, -8.13, -8.13, 2.1, 
+                              2.1,
+                              2.1, 2.1, 2.1, 2.1, 2.1, 2.1, 2.1, 2.1, 2.1, 2.1, 2.1, 2.1, 2.1, 2.1, 2.1, 2.1, 2.1, 2.1,
+                              2.1, 2.1, 2.1, 2.1, 2.1, 2.1, 2.1, 2.1, 2.1, 2.1, 2.1, 0.89, 0.89, 0.89, 0.89, 0.89, 0.89,
+                              0.89, 0.89, 0.89, 0.89, 0.89, 0.89, 0.89, 0.89, 0.89, 0.89, 0.89, 0.89, 0.89, 0.89, 0.89,
+                              0.89, 0.89, 0.89, 0.89, 0.89, 0.89, 6.79, 6.79, 6.79, 6.79, 6.79, 6.79, 6.79, 6.79, 6.79,
+                              6.79, 6.79, 6.79, 6.79, 6.79, 6.79, 6.79, 6.79, 6.79, 6.79, 6.79, 6.79, 6.79, 6.79, 6.79,
+                              1.37, 1.37, 1.37, 1.37, 1.37, 1.37, 1.37, 1.37, 1.37, 1.37, 1.37, 1.37, 1.37, 1.37, 1.37,
+                              1.37, 1.37, 1.37, 1.37, 1.37, 1.37, 1.37, 1.37, 1.37, 1.37, 1.37, 1.37, 1.37, 1.37, 1.37,
+                              -4.25, -4.25, -4.25, -4.25, -4.25, -4.25, -4.25, -4.25, -4.25, -4.25, -4.25, -4.25, -4.25,
+                              -4.25, -4.25, -4.25, -4.25, -4.25, -4.25, -4.25, -4.25, -4.25, -4.25, -4.25, -4.25, -4.25,
+                              -4.25, -4.25, 6.1, 6.1, 6.1, 6.1, 6.1, 6.1, 6.1, 6.1, 6.1, 6.1, 6.1, 6.1, 6.1, 6.1, 6.1, 
+                              6.1,
+                              6.1, 6.1, 6.1, 6.1, 6.1, 6.1, 6.1, 6.1, 6.1, 6.1, 6.1, 6.1, 6.1, 6.1, 6.1, 3.19, 3.19, 3.19,
+                              3.19, 3.19, 3.19, 3.19, 3.19, 3.19, 3.19, 3.19, 3.19, 3.19, 3.19, 3.19, 3.19, 3.19, 3.19,
+                              3.19, 3.19, 3.19, 3.19, 3.19, 3.19, 3.19, 3.19, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3,
+                              1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3, 1.3,
+                              -1.75, -1.75, -1.75, -1.75, -1.75, -1.75, -1.75, -1.75, -1.75, -1.75, -1.75, -1.75, -1.75,
+                              -1.75, -1.75, -1.75, -1.75, -1.75, -1.75, -1.75, -1.75, -1.75, -1.75, -1.75, -1.75, -1.75,
+                              -1.75, -1.75, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55,
+                              0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, -4.16, -4.16, -4.16, -4.16, -4.16, 
+                              -4.16,
+                              -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, 
+                              -4.16,
+                              -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, 
+                              -4.16,
+                              -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, 
+                              -4.16,
+                              -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, -4.16, 
+                              -4.16,
+                              -7.26, -7.26, -7.26, -7.26, -7.26, -7.26, -7.26, -7.26, -7.26, -7.26, -7.26, -7.26, -7.26,
+                              -7.26, -7.26, -7.26, -7.26, -7.26, -7.26, -7.26, -7.26, -7.26, -7.26, -7.26, -7.26, -7.26,
+                              -7.26, -7.26, -7.26, -7.26, -7.26, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25,
+                              0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25,
+                              0.25, 0.25, 0.25, 0.25, 13.12, 13.12, 13.12, 13.12, 13.12, 13.12, 13.12, 13.12, 13.12, 
+                              13.12,
+                              13.12, 13.12, 13.12, 13.12, 13.12, 13.12, 13.12, 13.12, 13.12, 13.12, 13.12, 13.12, 13.12,
+                              13.12, 13.12, 13.12)
+#Deefine Variable Average Plus Minus per team
+
+NHL_Skaters$GPG <- c(NHL_Skaters$G/NHL_Skaters$GP)
+NHL_Skaters$APG <- c(NHL_Skaters$A/NHL_Skaters$GP)
+NHL_Skaters$PenPG <- c(NHL_Skaters$PIM/NHL_Skaters$GP)
+NHL_Skaters$SPG <- c(NHL_Skaters$S/NHL_Skaters$GP)
+NHL_Skaters$BPG <- c(NHL_Skaters$BLK/NHL_Skaters$GP)
+NHL_Skaters$HPG <- c(NHL_Skaters$HIT/NHL_Skaters$GP)
+#Defining Per Game Statistics
+
+NHL_Skaters$PlusMinusAdj <- c(NHL_Skaters$`+/-` - NHL_Skaters$TmAvgPlusMinus)
+#Defining Variable for Adjusted Plus/Minus
+
+Ducks <- NHL_Skaters$Tm=='ANA'
+Coyotes <- NHL_Skaters$Tm=='ARI'
+Bruins <- NHL_Skaters$Tm=='BOS'
+Sabres <- NHL_Skaters$Tm=='BUF'
+Hurricanes <- NHL_Skaters$Tm=='CAR'
+BlueJackets <- NHL_Skaters$Tm=='CBJ'
+Flames <- NHL_Skaters$Tm=='CGY'
+BlackHawks <- NHL_Skaters$Tm=='CHI'
+Avalanche <- NHL_Skaters$Tm=='COL'
+DallasStars <- NHL_Skaters$Tm=='DAL'
+RedWings <- NHL_Skaters$Tm=='DET'
+Oilers <- NHL_Skaters$Tm=='EDM'
+Panthers <- NHL_Skaters$Tm=='FLA'
+Kings <- NHL_Skaters$Tm=='LAK'
+Wild <- NHL_Skaters$Tm=='MIN'
+Canadiens <- NHL_Skaters$Tm=='MTL'
+Devils <- NHL_Skaters$Tm=='NJD'
+Predators <- NHL_Skaters$Tm=='NSH'
+Islanders <- NHL_Skaters$Tm=='NYI'
+Rangers <- NHL_Skaters$Tm=='NYR'
+Senators <- NHL_Skaters$Tm=='OTT'
+Flyers <- NHL_Skaters$Tm=='PHI'
+Penguins <- NHL_Skaters$Tm=='PIT'
+Sharks <- NHL_Skaters$Tm=='SJS'
+Blues <- NHL_Skaters$Tm=='STL'
+Lightning <- NHL_Skaters$Tm=='TBL'
+MapleLeafs <- NHL_Skaters$Tm=='TOR'
+FreeAgents <- NHL_Skaters$Tm=='TOT'
+Canucks <- NHL_Skaters$Tm=='VAN'
+Jets <- NHL_Skaters$Tm=='WPG'
+Capitals <- NHL_Skaters$Tm=='WSH'
+#Defining the teams
+
+na.omit(NHL_Goalies)
+na.omit(NHL_Skaters)
+
+# adding first MRs
+
+Goalies <- NHL_Goalies$GS > 12
+#Defining Goalies as those who started more than 12 games
+
+NHL_Goalies$SVPG <- NHL_Goalies$SV/NHL_Goalies$GP
+#Creation of the SavePerGame statistic
+
+NHL_Goalies$WinPerc <- NHL_Goalies$W/NHL_Goalies$GS
+#Creation of the Win Percentage statistic for goalies
+
+NHL_Goalies$SOPerc <- NHL_Goalies$SO/NHL_Goalies$GS
+#Creation of the Shutout Percentage statistic for goalies
+
+# adding first complex MRs
+
+# MASS PASTE
+Age.z <- scale(NHL_Skaters$Age)
+Games.z <- scale(NHL_Skaters$GP)
+Goals.z <- scale(NHL_Skaters$G)
+Assists.z <- scale(NHL_Skaters$A)
+PlusMinus.z <- scale(NHL_Skaters$`+/-`)
+PlusMinusAdj.z <- scale(NHL_Skaters$PlusMinusAdj)
+PenMins.z <- scale(NHL_Skaters$PIM)
+Shots.z <- scale(NHL_Skaters$S)
+ShotPerc.z <- scale(NHL_Skaters$`S%`)
+IceTime.z <- scale(NHL_Skaters$TOI)
+TimePerGame.z <- scale(NHL_Skaters$ATOI)
+Blocks.z <- scale(NHL_Skaters$BLK)
+Hits.z <- scale(NHL_Skaters$HIT)
+FaceOffs.z <- scale(NHL_Skaters$`FO%`)
+FaceOffWins.z <- scale(NHL_Skaters$FOW)
+SkaterSalary.z <- scale(NHL_Skaters$Salary)
+TeamPoints.z <- scale(NHL_Skaters$TmPoints)
+GoalPerGame.z <- scale(NHL_Skaters$GPG)
+AsstsPerGame.z <- scale(NHL_Skaters$APG)
+PenMinsPerGame.z <- scale(NHL_Skaters$PenPG)
+ShotPerGame.z <- scale(NHL_Skaters$SPG)
+BlocksPerGame.z <- scale(NHL_Skaters$BPG)
+HitsPerGame.z <- scale(NHL_Skaters$HPG)
+#Z-scores for all relevant skater data
+
+GoalieAge.z <- scale(NHL_Goalies$Age)
+Starts.z <- scale(NHL_Goalies$GS)
+Wins.z <- scale(NHL_Goalies$W)
+Saves.z <- scale(NHL_Goalies$SV)
+SavePerc.z <- scale(NHL_Goalies$`SV%`)
+GoalsAgainstAvg.z <- scale(NHL_Goalies$GAA)
+Shutouts.z <- scale(NHL_Goalies$SO)
+ShutoutPerc.z <- scale(NHL_Goalies$SOPerc)
+GoalieSalary.z <- scale(NHL_Goalies$Salary)
+SavePerGame.z <- scale(NHL_Goalies$SVPG)
+QualityStartPerc.z <- scale(NHL_Goalies$`QS%`)
+#Z-scores for all relevant goalie data
+RightWing <- NHL_Skaters$GP > 16 & NHL_Skaters$Pos=='RW'
+LeftWing <- NHL_Skaters$GP > 16 & NHL_Skaters$Pos=='LW'
+Center <- NHL_Skaters$GP > 16 & NHL_Skaters$Pos=='C'
+Forward <- RightWing | LeftWing | Center
+#Defining Forward as an LW, C, or RW playing more than 16 games
+Defender <- NHL_Skaters$GP > 16 & NHL_Skaters$Pos=='D'
+#Defining Defender as a D playing more than 16 Games
+Other <- !Forward & !Defender
+# Define Others as skaters who played fewer than 16 games (neither forwards nor defenders in this set)
+
+
+GoalieSalarySVPerc.MR <- summary(lm(NHL_Goalies$Salary[Goalies] ~ NHL_Goalies$Age[Goalies] + NHL_Goalies$GS[Goalies]
+                              + NHL_Goalies$WinPerc[Goalies] + NHL_Goalies$`SV%`[Goalies]
+                              + NHL_Goalies$SOPerc[Goalies] + NHL_Goalies$`QS%`[Goalies]))
+
+GoalieSalaryGAA.MR <- summary(lm(NHL_Goalies$Salary[Goalies] ~ NHL_Goalies$Age[Goalies] + NHL_Goalies$GS[Goalies]
+                                 + NHL_Goalies$WinPerc[Goalies] + NHL_Goalies$GAA[Goalies]
+                                 + NHL_Goalies$SOPerc[Goalies] + NHL_Goalies$`QS%`[Goalies]))
+
+GoalieSalarySVPG.MR <- summary(lm(NHL_Goalies$Salary[Goalies] ~ NHL_Goalies$Age[Goalies] + NHL_Goalies$GS[Goalies]
+                                    + NHL_Goalies$WinPerc[Goalies] + NHL_Goalies$SVPG[Goalies]
+                                    + NHL_Goalies$SOPerc[Goalies] + NHL_Goalies$`QS%`[Goalies]))
+
+GoalieWinsGAA.MR <- summary(lm(NHL_Goalies$WinPerc[Goalies] ~ NHL_Goalies$Age[Goalies]
+                               + NHL_Goalies$GAA[Goalies]  
+                               + NHL_Goalies$SOPerc[Goalies] + NHL_Goalies$`QS%`[Goalies]))
+
+GoalieWinsSVPG.MR <- summary(lm(NHL_Goalies$WinPerc[Goalies] ~ NHL_Goalies$Age[Goalies]
+                                + NHL_Goalies$SVPG[Goalies]
+                                + NHL_Goalies$SOPerc[Goalies] + NHL_Goalies$`QS%`[Goalies]))
+
+GoalieWinsSVPerc.MR <- summary(lm(NHL_Goalies$WinPerc[Goalies] ~ NHL_Goalies$Age[Goalies] 
+                                  + NHL_Goalies$`SV%`[Goalies] + NHL_Goalies$SOPerc[Goalies] 
+                                  + NHL_Goalies$`QS%`[Goalies]))
+
+#Defining multiple regression summaries for Goalie Regressions
+#Note: GAA and 'SV%' are cross-correlated
+
+ForwardsSalaryShots.MR <- summary(lm(NHL_Skaters$Salary[Forward] ~ NHL_Skaters$Age[Forward] + NHL_Skaters$GP[Forward] 
+                                     + NHL_Skaters$SPG[Forward] + NHL_Skaters$APG[Forward] + NHL_Skaters$PenPG[Forward] 
+                                     + NHL_Skaters$`S%`[Forward] + NHL_Skaters$ATOI[Forward] 
+                                     + NHL_Skaters$BPG[Forward] + NHL_Skaters$HPG[Forward] 
+                                     + NHL_Skaters$PlusMinusAdj[Forward]))
+
+ForwardsSalaryGoals.MR <- summary(lm(NHL_Skaters$Salary[Forward] ~ NHL_Skaters$Age[Forward] + NHL_Skaters$GP[Forward] 
+                                     + NHL_Skaters$GPG[Forward] + NHL_Skaters$APG[Forward] + NHL_Skaters$PenPG[Forward] 
+                                     + NHL_Skaters$`S%`[Forward] + NHL_Skaters$ATOI[Forward] 
+                                     + NHL_Skaters$BPG[Forward] + NHL_Skaters$HPG[Forward] 
+                                     + NHL_Skaters$PlusMinusAdj[Forward]))
+
+ForwardsTmPointsShots.MR <- summary(lm(NHL_Skaters$TmPoints[Forward] ~ NHL_Skaters$Age[Forward] + NHL_Skaters$GP[Forward] 
+                                       + NHL_Skaters$APG[Forward] + NHL_Skaters$PenPG[Forward] 
+                                       + NHL_Skaters$SPG[Forward] + NHL_Skaters$`S%`[Forward] + NHL_Skaters$ATOI[Forward] 
+                                       + NHL_Skaters$BPG[Forward] + NHL_Skaters$HPG[Forward]
+                                       + NHL_Skaters$PlusMinusAdj[Forward]))
+
+ForwardsTmPointsGoals.MR <- summary(lm(NHL_Skaters$TmPoints[Forward] ~ NHL_Skaters$Age[Forward] + NHL_Skaters$GP[Forward] 
+                                       + NHL_Skaters$APG[Forward] + NHL_Skaters$PenPG[Forward] 
+                                       + NHL_Skaters$GPG[Forward] + NHL_Skaters$`S%`[Forward] + NHL_Skaters$ATOI[Forward] 
+                                       + NHL_Skaters$BPG[Forward] + NHL_Skaters$HPG[Forward]
+                                       + NHL_Skaters$PlusMinusAdj[Forward]))
+#Defining multiple regression summaries for forward regressions
+#Note: Goals and Shots are cross-correlated
+
+DefenderSalaryGoals.MR <- summary(lm(NHL_Skaters$Salary[Defender] ~ NHL_Skaters$Age[Defender] + NHL_Skaters$GP[Defender] 
+                                     + NHL_Skaters$GPG[Defender] + NHL_Skaters$APG[Defender] 
+                                     + NHL_Skaters$PenPG[Defender] 
+                                     + NHL_Skaters$`S%`[Defender] + NHL_Skaters$ATOI[Defender] 
+                                     + NHL_Skaters$BPG[Defender] + NHL_Skaters$HPG[Defender] 
+                                     + NHL_Skaters$PlusMinusAdj[Defender]))
+
+DefenderSalaryShots.MR <- summary(lm(NHL_Skaters$Salary[Defender] ~ NHL_Skaters$Age[Defender] + NHL_Skaters$GP[Defender] 
+                                     + NHL_Skaters$SPG[Defender] + NHL_Skaters$APG[Defender] 
+                                     + NHL_Skaters$PenPG[Defender] 
+                                     + NHL_Skaters$`S%`[Defender] + NHL_Skaters$ATOI[Defender] 
+                                     + NHL_Skaters$BPG[Defender] + NHL_Skaters$HPG[Defender] 
+                                     + NHL_Skaters$PlusMinusAdj[Defender]))
+
+DefenderTmPointsGoals.MR <- summary(lm(NHL_Skaters$TmPoints[Defender] ~ NHL_Skaters$Age[Defender] 
+                                       + NHL_Skaters$GP[Defender] 
+                                       + NHL_Skaters$GPG[Defender] + NHL_Skaters$APG[Defender] 
+                                       + NHL_Skaters$PenPG[Defender] 
+                                       + NHL_Skaters$`S%`[Defender] + NHL_Skaters$ATOI[Defender] 
+                                       + NHL_Skaters$BPG[Defender] + NHL_Skaters$HPG[Defender] 
+                                       + NHL_Skaters$PlusMinusAdj[Defender]))
+
+DefenderTmPointsShots.MR <- summary(lm(NHL_Skaters$TmPoints[Defender] ~ NHL_Skaters$Age[Defender] 
+                                       + NHL_Skaters$GP[Defender] 
+                                       + NHL_Skaters$SPG[Defender] + NHL_Skaters$APG[Defender] 
+                                       + NHL_Skaters$PenPG[Defender] 
+                                       + NHL_Skaters$`S%`[Defender] + NHL_Skaters$ATOI[Defender] 
+                                       + NHL_Skaters$BPG[Defender] + NHL_Skaters$HPG[Defender] 
+                                       + NHL_Skaters$PlusMinusAdj[Defender]))
+#Defining multiple regressions for defender regressions
+#Note: Goals and Shots are cross-correlated
+
+JeffrickasFWD <- (1.151*Age.z[Forward] + 1.707*Games.z[Forward] + 3.027*GoalPerGame.z[Forward]
+                    + 6.993*AsstsPerGame.z[Forward] - 1.685*PenMinsPerGame.z[Forward] 
+                    + 3.78*ShotPerc.z[Forward] + 2.863*ShotPerGame.z[Forward]
+                    + 3.818*BlocksPerGame.z[Forward] + 1.735*HitsPerGame.z[Forward]
+                    + 1.398*PlusMinusAdj.z[Forward] - 5.09281)
+#Beginning of aggregate value statistic, the 'Jeffrickas Index', for forwards
+                      
+JeffrickasDEF <- (0.622*Age.z[Defender] + 1.493*Games.z[Defender] - 0.192*GoalPerGame.z[Defender] 
+                    + 2.993*AsstsPerGame.z[Defender] - 0.791*PenMinsPerGame.z[Defender] 
+                  + 1.867*ShotPerc.z[Defender] 
+                    + 0.448*ShotPerGame.z[Defender] + 1.507*BlocksPerGame.z[Defender] 
+                  - 0.075*HitsPerGame.z[Defender] 
+                    + 2.92*PlusMinusAdj.z[Defender] - 2.441374)
+#Beginning of aggregate value statistic, the 'Jeffrickas Index', for defenders
+
+JeffrickasGOL <- (2.093*SavePerc.z[Goalies] - 0.852*GoalieAge.z[Goalies] - 4.192*GoalsAgainstAvg.z[Goalies] 
+                  + 0.754*QualityStartPerc.z[Goalies] + 1.723*ShutoutPerc.z[Goalies]
+                  - 1.607*SavePerGame.z[Goalies] - 0.724624)
+#Beginning of aggregate value statistic, the 'Jeffrickas Index', for goalies
+
+#Correlation Plots
+string.free.goalies <- NHL_Goalies[,-c(1:2,4,13:14,18,20:22,28:29)]
+string.free.skaters <- NHL_Skaters[,-c(1:4,5,27,20)]
+Goalies.Cor <- cor(string.free.goalies)
+Skaters.Cor <- cor(string.free.skaters)
+corrplot(Goalies.Cor, method = "circle") #plot matrix
+corrplot(Skaters.Cor, method = "circle") #plot matrix
+
+#Correlations
+cor(NHL_Skaters$Salary[Forward], NHL_Skaters$TmPoints[Forward])
+cor(NHL_Skaters$Salary[Forward], JeffrickasFWD)
+cor(NHL_Skaters$TmPoints[Forward], JeffrickasFWD)
+cor(NHL_Skaters$`+/-`[Forward], NHL_Skaters$TmPoints[Forward])
+
+cor(NHL_Skaters$Salary[Defender], NHL_Skaters$TmPoints[Defender])
+cor(NHL_Skaters$Salary[Defender], JeffrickasDEF)
+cor(NHL_Skaters$TmPoints[Defender], JeffrickasDEF)
+cor(NHL_Skaters$`+/-`[Defender], NHL_Skaters$TmPoints[Defender])
+
+cor(NHL_Goalies$Salary[Goalies], NHL_Goalies$WinPerc[Goalies])
+cor(NHL_Goalies$Salary[Goalies], JeffrickasGOL)
+cor(NHL_Goalies$WinPerc[Goalies], JeffrickasGOL)
+cor(NHL_Goalies$GAA[Goalies], NHL_Goalies$WinPerc[Goalies])
+
+ResidualsFWD <- resid(lm(NHL_Skaters$Salary[Forward]~JeffrickasFWD))
+ResidualsDEF <- resid(lm(NHL_Skaters$Salary[Defender]~JeffrickasDEF))
+ResidualsGOL <- resid(lm(NHL_Goalies$Salary[Goalies]~JeffrickasGOL))
+
+DEF_Jeffrickas.z <- scale(JeffrickasDEF)
+DEF_Salary.z <- scale(NHL_Skaters$Salary[Defender])
+FWD_Jeffrickas.z <- scale(JeffrickasFWD)
+FWD_Salary.z <- scale(NHL_Skaters$Salary[Forward])
+GOL_Jeffrickas.z <- scale(JeffrickasGOL)
+GOL_Salary.z <- scale(NHL_Goalies$Salary[Goalies])
+
+DEF_MoneyPuck <- c(DEF_Salary.z - DEF_Jeffrickas.z)
+FWD_MoneyPuck <- c(FWD_Salary.z - FWD_Jeffrickas.z)
+GOL_MoneyPuck <- c(GOL_Salary.z - GOL_Jeffrickas.z)
+
+linear <- curve(x^1, from=-4, to=50, , xlab="x", ylab="y")
+
+
+```
+
+##Statistical Testing
+
+Given that, in the NHL, different teams have various schemes, gameplans, line changes, and strategies in play, the most direct possible comparisons of player value come at the Goaltender position. A goalie is either going to allow a shot to go in, or he isn't. Of course, being an NHL goaltender is much harder work than that simplification, but that is the essence of a goaltender's  duties. The relevant statistics considered to be expected to contribute to a goalie's salary were Age, Win Percentage (WinPerc), Save Percentage (SV%), Goals Against per Game (GAA), Saves Per Game (SVPG), Shutout Percentage(SO%), and Quality Start Percentage (A quality start is a game in which a goalie has a save percentage higher than the league average, or one in which he saves 88.5% of shots, while also allowing fewer than 2 goals). Knowing logically that Save Percentage, Saves Per Game, and Goals Against Average would be cross-correlated, three separate multiple regressions were run.
+
+***
+
+<br>
+
+## Goalie Salary Regression Tests {.tabset .tabset-fade .tabset-pills}
+
+As is evident by the data, the only metrics that ended up correlating with a Goalie's salary were Age and Games Started. No other hockey statistic registered as significant. Win%, GAA, SV%, SVPG, and QS% all produced fairly large p-values. Results are shown below.
+
+***
+
+### Save Percentage
+
+```{r, comment = NA, null_prefix=TRUE}
+
+GoalieSalarySVPerc.MR
+
+```
+
+***
+
+<br>
+
+### Goals Against Average
+
+```{r, comment = NA, null_prefix=TRUE}
+
+GoalieSalaryGAA.MR
+
+```
+
+*** 
+
+<br>
+
+### Saves Per Game
+
+```{r, comment = NA, null_prefix=TRUE}
+
+GoalieSalarySVPG.MR
+
+```
+
+
+***
+
+<br>
+
+## Goalie Win% Regression Tests {.tabset .tabset-fade .tabset-pills}
+
+To test whether this is a reasonable, or effective, way to pay Goalies, a round of multiple regressions was run with Win Percentage as the dependent variable. This is to see if any hockey statistic can be statistically shown to have a significant correlation with wins. It will also show whether or not the significance levels were comparable to those for the salary regressions. Each statistic registered different significance levels. GAA had a p-value of about .0001, meaning there was just about a 99.99% chance that that statistic is significant for wins. SV% and SO% (in one of three tests) also registered statistically significant results. Full results are shown below.
+
+***
+
+### Save Percentage
+
+```{r, comment = NA, null_prefix=TRUE}
+
+GoalieWinsSVPerc.MR
+
+```
+
+***
+
+<br>
+
+### Goals Against Average
+
+```{r, comment = NA, null_prefix=TRUE}
+
+GoalieWinsGAA.MR
+
+```
+
+*** 
+
+<br>
+
+### Saves Per Game
+
+```{r, comment = NA, null_prefix=TRUE}
+
+GoalieWinsSVPG.MR
+
+```
+
+***
+
+<br>
+
+## The Jeffrickas Index
+
+Some of the above results were striking, as GAA, SV%, and SO% registered significantly for Win%, but did not register as significant for salary data. This was a common finding, indicating that contribution to wins on the ice did not necessarily translate into a higher salary from the front office. The results from the Win% regressions led to the creation of an algorithm that could serve as an index to model how efficiently a Goalie contributes to his team winning. This model was generated by multiplying the z-score for each statistic (no. of standard deviations above the league average) by the average t-value for that same statistic (while maintaining the positive or negative nature of the correlation). That number was then adjusted to produce a mean score of zero across the index.
+
+This index was named the "Jeffrickas Index" to combine my last name, with that of Paul Jeffries, whose contributions helped establish this inquiry. It is important to note that this Jeffrickas score indicates value not over the course of a Goalie's entire career or of multiple seasons, but for only the 2016-17 season.
+
+Here are the summary statistics of that index for Goalies:
+
+```{r, comment = NA, null_prefix=TRUE}
+
+summary(JeffrickasGOL)
+
+```
+
+<br>
+
+When plotted, you can see that there is a definite positive correlation between a Goalie's Jeffrickas score, and win percentage. The Jeffrickas Index for Goalies correlated 70.5% with a Goalie's win percentage. 
+
+```{r, comment = NA, null_prefix=TRUE}
+
+plot(JeffrickasGOL, NHL_Goalies$WinPerc[Goalies])
+
+```
+
+***
+
+<br>
+
+## Forward Salary Regression Tests {.tabset .tabset-fade .tabset-pills}
+
+Having established an index for Goalies, and a general understanding of what statistics contribute to both salary and Win%, the same methodology was then applied to Skaters (non-goalies). However, due to the differing roles each position plays on the ice, the Skaters were divided into Forwards and Defensemen, each getting their own regression model and Jeffrickas Index.
+
+As all of the statistics for Goalies were average or percentage based, skater data was converted to averages as well (Goals into Goals per Game, etc). After doing this, only Blocked Shots per Game (BPG) and Penalty Minutes per Game (PenPG) failed to register as significant in either test. Age was by far the most correlative, with results showing it is almost impossible to achieve the same level of correlation by chance (very low p-value).
+
+The full results can be found below
+
+***
+
+<br>
+
+### Shots
+
+```{r, comment = NA, null_prefix=TRUE}
+
+ForwardsSalaryShots.MR
+
+```
+
+***
+
+<br>
+
+### Goals
+
+```{r, comment = NA, null_prefix=TRUE}
+
+ForwardsSalaryGoals.MR
+
+```
+
+
+***
+
+<br>
+
+## Forward Team Pts Regression Test {.tabset .tabset-fade .tabset-pills}
+
+Similar regressions were run, but this time the dependent variable was Team Points (in the standings), as Skaters do not have win-loss records like Goalies. In these tests, Blocks per game, Goals per game, Assists per game, and Shots per game registered as statistically significant in each test. Average Time on Ice (ATOI) also was significant, but in the negative direction. Adjusted Plus Minus (a player's +/- in relation to his team's average), and Shot Percentage (S%) gave fairly low, yet insignificant p-values.
+
+Full results shown below:
+
+***
+
+<br>
+
+### Shots
+
+```{r, comment = NA, null_prefix=TRUE}
+
+ForwardsTmPointsShots.MR
+
+```
+
+***
+
+<br>
+
+### Goals
+
+```{r, comment = NA, null_prefix=TRUE}
+
+ForwardsTmPointsGoals.MR
+
+```
+
+***
+
+<br>
+
+## Forward Jeffrickas Index
+
+Using the same algorithm as was used for Goalies, Forwards were assigned their own Jeffrickas score (with the mean again adjusted to be zero). This index correlated far less directly with Team Wins (points in the standings) as did the goalie index, as team points is a measure of team performance, whereas, Jeffrickas is a measure of individual performance based on the statistics that correlate most closely with team points.
+
+Again, it is important to note that this only reflects value for this season, and not over the course of multiple seasons.
+
+The summary statistics for Forwards' Jeffrickas and the graph of its correlation with Salary are shown below. 
+
+***
+
+```{r, comment = NA, null_prefix=TRUE}
+
+summary(JeffrickasFWD)
+
+```
+
+***
+
+```{r, comment = NA, null_prefix=TRUE}
+
+plot(JeffrickasFWD, NHL_Skaters$Salary[Forward])
+
+```
+
+***
+
+<br>
+
+## Defender Salary Regression Tests {.tabset .tabset-fade .tabset-pills}
+
+When tests were run for Defenders, with relation to salary, only Age, Goals per Game (GPG), Shot Percentage (S%) and Average Time on Ice (ATOI) came back as statistically significant.The full results are displayed below:
+
+***
+
+<br>
+
+### Shots
+
+```{r, comment = NA, null_prefix=TRUE}
+
+DefenderSalaryShots.MR
+
+```
+
+***
+
+<br>
+
+### Goals
+
+```{r, comment = NA, null_prefix=TRUE}
+
+DefenderSalaryGoals.MR
+
+```
+
+***
+
+<br>
+
+## Defender Win% Regression Tests {.tabset .tabset-fade .tabset-pills}
+
+In running the regression tests for defenders as it relates to Team Points, Adjusted Plus Minus, Assists per Game (APG), and Average Time on Ice (ATOI) registered statistically significant results in both tests. Shot Percentage (S%) registered significantly in only one of two tests.
+
+Full results are shown below:
+
+***
+
+<br>
+
+### Shots
+
+```{r, comment = NA, null_prefix=TRUE}
+
+DefenderTmPointsShots.MR
+
+```
+
+***
+
+<br>
+
+### Goals
+
+```{r, comment = NA, null_prefix=TRUE}
+
+DefenderTmPointsGoals.MR
+
+```
+
+***
+
+<br>
+
+## Defender Jeffrickas Index
+
+Using the same algorithm as was used for Goalies and Forwards, Defenders were assigned their own Jeffrickas score (with the mean again adjusted to be zero). Again, this index correlated less directly with Team Points for much the same reasons as stated above for forwards.
+
+Again, it is important to note that this only reflects value compared to salary for the 2016-17 season, and not over the course of multiple seasons.
+
+The summary statistics for Defenders' Jeffrickas and the graph of its correlation with Salary are shown below.
+
+***
+
+```{r, comment = NA, null_prefix=TRUE}
+
+summary(JeffrickasDEF)
+
+```
+
+***
+
+```{r, comment = NA, null_prefix=TRUE}
+
+plot(JeffrickasDEF, NHL_Skaters$Salary[Defender])
+
+```
+
+***
+
+<br>
+
+##Overall Jeffrickas Summary
+
+Having taken all of this into consideration, and having established a metric to measure player value, we want to see who the most valuable players in the NHL were for the 2016-17 season, and see if that generally aligns with popular opinion, and then measure Jeffrickas scores against salary to see who most overperforms, and who most underperforms, given what they are paid.
+
+***
+
+![Connor McDavid Scored as the Most Valuable Forward in the NHL for 2016-17](/Users/Daniel/Desktop/Connor_McDavid1.png)
+
+***
+
+For all Jeffrickas indeces, the mean is zero. For Forwards, the standard deviation of the index was 13.21. According the Jeffrickas Index for Skaters, the player with the most pure value (without taking salary into consideration) for the 2016-17 NHL Season was Connor McDavid, the 20-year-old Center for the Edmonton Oilers. He registered the Jeffrickas score of 38.74. The Jeffrickas Index for forwarss places a premium on assists per game, with it being the most heavily weighted factor. McDavid led the league in assists with 70.
+
+McDavid's Jeffrickas score was narrowly 0.03 points higher than the second-best forward, Sidney Crosby, of the Pittsburgh Penguins, who scored a 38.71. Coming in third, with a score of 33.41, was Nikita Kucherov, a Right Winger for the Tampa Bay Lightning.
+
+For Defensemen, the standard deviation of their index was approximately 6. According to that Index, most valuable Defenseman in the league was Erik Karlsson of the Ottawa Senators. Karlsson posted a Jeffrickas score of 17.30. Karlsson was closely followed in second by Brent Burns of the San Jose Sharks, who scored 16.77 (less than one-tenth of a standard deviation behind). Coming in third was Jared Spurgeon of the Minnesota Wild with a score of 14.43.
+
+![Erik Karlsson of the Ottawa Senators](/Users/Daniel/Desktop/Erik_Karlsson3.png)
+
+***
+
+Goalies produced very interesting results. The standard deviation for the Goalies index was 3.28, with the maximum score being a 7.83. That high score belongs to Philipp Grubauer, the backup Goalie for the Washington Capitals. Grubauer posted a winning percentage just north of 68.4%, the highest among qualifying Goalies. He also allowed just 2.05 Goals per Game, the second lowest in the league. He shutout opponents in over 15% of his starts.
+
+Coming in second place, a half standard deviation behind Grubauer at 6.26, is the man who starts ahead of Grubauer in Washington, Braden Holtby.
+
+![The Capitals have an embarassment of riches at the Goalie position](/Users/Daniel/Desktop/Holtby_Grubauer.png)
+
+***
+
+Holtby allowed only 2.07 goals per game, just a hair more than Grubauer. Holtby posted a season long save percentage of 92.5%, compared with Grubauer's 92.6%. Holtby won 2 out of every 3 of his starts in the 2016-17 season. While it is altogether possible that Grubauer's incredible numbers would have dissipated if given a full workload, for the 2016-17 season, when he was on the ice, he was the best in the league.
+
+***
+
+![Anti Raanta of the New York Rangers](/Users/Daniel/Desktop/Anti_Raanta4.png)
+
+***
+
+Coming third in the rankings with a score of 6.07, was yet another backup, Anti Raanta of the New York Rangers. Raanta backs up the man widely believed to be the best Goalie in the league, Henrik Lundqvist. However, Lundqvist has underperformed this year, registering a -2.90 on the Jeffrickas scale. Raanta, in his time, stepped up to post a save percentage of 92.2% and allow only 2.26 goals per game (compared with Lundqvist's 2.74). While Lundqvist may remain in the conversation for best in the game, this year he was significantly outshown.
+
+The results for Goalie suggest two things. The first is that there are quite a few teams who are not starting their most effective Goalie. Given that both the Rangers and Capitals are in the midst of the Stanley Cup chase, it might be worthwhile for them to consider looking to their backups if they get into a rough situation. Second, for any team needing a Goalie this offseason, their best bet might be to look to other teams' backups to try and acquire solid, overlooked talent at a cheap price.
+
+***
+
+<br>
+
+##Most (and Least) Bang for Their Puck {.tabset .tabset-fade .tabset-pills}
+
+Now that we have a standard metric to gauge player value, and all salary data for these players, we can run tests and equations to see who are the most overpaid and underpaid players in the NHL. The first step is to find the average (mean) salary for players at each of the three designated positions and the standard deviation of those salaries. After that, we do the same for the Jeffrickas scores at those positions. Then we find each player's z-score (Player's value/salary, minus the mean, divided by the standard deviation) for both salary and Jeffrickas. Then, to determine whether a player is overpaid or underpaid, we subtract the player's z-score for salary from his z-score for Jeffrickas. 
+
+```{r, comment = NA, null_prefix=TRUE}
+
+plot(FWD_Jeffrickas.z, FWD_Salary.z, 'p')
+lines(linear)
+
+```
+
+For example, in the graph above, you'll see the Jeffrickas z-scores for all Forwards plotted on the horizontal axis, and their salary z-scores on the vertical axis. The mean salary for a Forward is $2.56 million, and the standard deviation for salary is 2.3 (in millions). The mean Jeffrickas for a Forward (as for all positions) is zero, with a standard deviation of 13.22. A point above the line indicates a player who is overpaid and thus underperformed (higher salary z-score), and a point under the line indicates a player who is underpaid and thus overperformed (higher Jeffrickas z-score). 
+
+For Defenders, the mean salary is 2.62 million, while the standard deviation is 2.05 (in millions). The mean Jeffrickas is zero, while the standard deviation is 6.00. The same rules apply to the graph below with regards to a player's proximity to the line. 
+
+```{r, comment = NA, null_prefix=TRUE}
+
+plot(DEF_Jeffrickas.z, DEF_Salary.z, 'p')
+lines(linear)
+
+```
+
+For Goalies, the mean salary is $3.39 million, with a standard deviation of 2.54 (in millions). The mean Jeffrickas score is again zero, and the standard deviation is 3.28. That graph is displayed below.
+
+```{r, comment = NA, null_prefix=TRUE}
+
+plot(GOL_Jeffrickas.z, GOL_Salary.z, 'p')
+lines(linear)
+
+```
+
+Using this methodolgy, to no surprise, McDavid emerges as the most underpaid Forward in the league. His Jeffrickas is the highest in the league amongst Forwards. With a Jeffrickas at his level, he should be paid a little under 9 million per year. However, he only received a salary of 832,500 this year. This isn't too shocking, as he is an incredibly young player. Nevertheless, the Oilers are getting an incredible deal during the length of McDavid's current contract. 
+
+<br>
+
+![The Oilers are gaining incredible value from their two young forwards](/Users/Daniel/Desktop/McDavidDraisaitl.png)
+
+<br>
+
+Beyond that, David Pastrnak, of the Boston Bruins, came in second, being undercut by a little under 6 million dollars given his value. Leon Draisaitl, a teammate of McDavid's in Edmonton, came in third, having been paid the same 832,500, but having deserved about 6 million.
+
+The top ten most underpaid Forwards are listed below, in order of how much they were underpaid:
+
+Connor McDavid (C, Edmonton Oilers),
+David Pastrnak (RW, Boston Bruins),
+Leon Draisaitl (C, Edmonton Oilers),
+Conor Sheary (LW, Pittsburgh Penguins),
+Jack Eichel (C, Buffalo Sabres),
+Artemi Panarin (LW, Chicago Blackhawks),
+Patrik Laine (RW, Winnipeg Jets),
+Auston Matthews (C, Toronto Maple Leafs),
+Viktor Arvidsson (LW, Nashville Predators),
+Jake Guentzel (C, Pittsburgh Penguins).
+
+On the other side, however, there is quite a bit of surprise. The most overpaid player, according to the data (with the exception of Ryan Callahan, who missed most of the season with injury) was Anze Kopitar, of the Los Angeles Kings. Kopitar is a three-time all star, and a two-time Stanley Cup champion. His Jeffrickas score was only about one standard deviation above the mean, whereas his salary of 10 million dollars a year was among the highest in the league. The model indicates he was only worth about 5 million or so this year.
+
+<br>
+
+![Toews(left) and Kopitar(right) are among the NHL stars who didn't live up to their salaries this year](/Users/Daniel/Desktop/ToewsKopitar.png)
+
+<br>
+
+Jonathan Toews, a former MVP and 2016-17 All Star selection, came in as the second most overpaid player. He got paid a lofty 10.5 million dollars this year, whereas his Jeffrickas score suggests he only about 6 million. He definitely has value, and sits among the top of the league. However, the Blackhawks are shelling out far too much cash for what they're getting at this point. Below are the top ten most overpaid in the NHL, in order of how much they're overpaid:
+
+Anze Kopitar (C, Los Angeles Kings), Jonathan Toews (C, Chicago Blackhawks), Carl Soderberg (C, Colorado Avalanche), Claude Giroux (C, Philadelphia Flyers), Tomas Plekanec (C, Montreal Canadiens), Zach Parise (LW, Minnesota Wild), Anton Blidh (LW, Boston Bruins), Bobby Ryan (RW, Ottawa Senators), Marian Gaborik (RW, Los Angeles Kings), Loui Eriksson (LW, Vancouver Canucks).
+
+On the defensive end, the most underpaid Defenseman is Jaccob Slavin of the Carolina Hurricanes. Slavin finished 13th amongst all defenders with 161 blocks in the 2016-17 season. Also of note is that Slavin finished the year with a +/- of 23, despite the Carolina team average being -4.29. Slavin's Jeffrickas shows he was worth about 7 million dollars this season, but was only paid $832,500. This is not entirely shocking, as Slavin is only 22.
+
+Following Slavin is Justin Schultz of the Pittsburgh Penguins. Schultz finished with a lofty +/- of 27, and scored 51 points, significantly above average for Defenders. While Schultz got paid 1.4 million this season, he was actually worth about 7.5 million.
+
+<br>
+
+![Veteran Dennis Seidenberg far outplayed his value this season](/Users/Daniel/Desktop/Seidenberg.png)
+
+<br>
+
+The man who finished third produces quite an interesting narrative, however. Almost all of the players who rated as severely underpaid (for both Forwards and Defensemen) were very young players who had a breakout year, or whose salaries were restricted by the rookie maximum imposed by the NHL Collective Bargaining Agreement. However, the 35 year old Dennis Seidenberg of the New York Islanders rates as the third most underpaid Defensman. Seidenberg is in his 15th season, playing for his 6th NHL team. Despite this, Seidenberg is only paid 1 million dollars per season. Conversely, he finished over 2 standard deviations above the mean in the Jeffrickas index. This indicates he should have been paid just under 6 million. Seidenberg remained physical, lodging a large number of blocked shots and hits, and a high +/- of 25. He is producing at quite a high level in the twilight of his career.
+
+Rounding out the top 5 most underpaid Defensemen are Brett Pesce of the Carolina Hurricanes, and Zach Werenski of the Columbus Blue Jackets.
+
+On the other hand, there are defenders like the Buffalo Sabres' Dmitry Kulikov. Kulikov got paid a cool 4.5 million this season, despite only posting a grand total of 5 points in 47 games. He average less than one shot per game. His Jeffrickas is so low, it actually indicates he should have to pay the Sabres to play for them. He was worth negative money this season.
+
+Finishing just behind Kulikov in the race to be the most egregiously overpaid Defenseman is the highest paid defender in the league, PK Subban of the Nashville Predators. According to the Jeffrickas index, Subban was only very marginally above average for a Defender. Despite this, he gets paid a hefty 9 million dollars. His play this season, however, was only worth about 3.3 million.
+
+Travis Hamonic, of the New York Islanders, Zach Bogosian, of the Buffalo Sabres, and Oliver Ekman-Larsson, of the Arizona Coyotes, complete the top 5 most overpaid Defensemen.
+
+<br>
+
+![PK Subban did not nearly live up to his title of highest paid Defenseman](/Users/Daniel/Desktop/PKSubban4.png)
+
+<br>
+
+Goalies are a completely different animal altogether. As you can see in the graph below, a Goalie's salary does not appear to be, in any way, related to his value in the Jeffrickas index. In the same way, in the earlier graph, many Goalies fell far off the line that shows expected salary. The way NHL Goalies are paid, at least for this season, makes very little sense.
+
+```{r, comment = NA, null_prefix=TRUE}
+
+plot(JeffrickasGOL,NHL_Goalies$Salary[Goalies])
+
+```
+
+Of the 60 Goalies who factored into this analysis, 15 of them were overpaid or underpaid by over 5 million dollars. Regardless of whether or not you think the Jeffrickas index is a reliable metric for player value, it cannot be denied that the NHL is pretty poor at gauging the monetary value of their Goalies. 
+
+The most overpaid Goalie, by quite a wide margin, is Henrik Lundqvist, of the New York Rangers. Lundqvist, at probably any other point in his career, would score very well on this index. However, this year, he had a very subpar season combined with the highest salary amongst Goalies. He allowed 2.74 goals per game, and only had two shutouts. Getting paid 9.5 million, Lundqvist's season was only worth 1.15 million. 
+
+<br>
+
+![Henrik Lundqvist was the "King" of getting overpaid this NHL season](/Users/Daniel/Desktop/Lundqvist.png)
+
+<br>
+
+Following Lundqvist, albeit by a wide margin, is Semyon Varlamov, of the Colorado Avalanche, who was paid 6 million despite posting an abysmal 3.38 goals per game average and a sub-90% save percentage. In third, came NHL veteran, Roberto Luongo, of the Florida Panthers. His season was worth just a little less than half a million dollars, while he was paid over 6.7 million. 
+
+Among the other Goaltenders who were badly overpaid are Mike Smith (Arizona Coyotes), Marc-Andre Fleury (Pittsburgh Penguins), Antti Niemi (Dallas Stars), and Ryan Miller (Vancouver Canucks).
+
+It was already well-established that two of the three best Goalies in the league are backups (Philip Grubauer and Anti Raanta). Naturally, those two are the most underpaid goalies in the league. Grubauer's season was worth about 9.4 million dollars, but he was only paid a lowly 832,500. Raanta was worth just a hair over 8 million while being paid just 1 million. 
+
+Backup Goalies were certainly not done beyond these two, though. The next two Goalies on the underpaid scale are also backups. Carter Hutton of the St. Louis Blues posted a respectable 2.39 Goals Against Average and a 91.3% save percentage. However, where Hutton made his mark was in shutouts. Hutton had shutouts in an incredible 19% of his starts. All in all, Hutton was worth 7.8 million, and was only paid 1.25 million.
+
+<br>
+
+![Sharks backup, Aaron Dell, had quite possibly the best season of any NHL Goalie](/Users/Daniel/Desktop/AaronDell.png)
+
+<br>
+
+Aaron Dell, the backup for the San Jose Sharks, quietly had himself an incredible season. He posted a league low in goals per game with a flat 2.00. Not only that, he had a league high save percentage of 93.1%. He had a quality start in 70.6% of his starts, also a league high. Dell's mind-blowing season was worth just under 7 million dollars. However, he was paid a league low for Goalies with only 575,000 dollars in salary this season.
+
+Below are the rest of the most underpaid Goalies in the NHL this season. Of them, Budaj and Condon are also backups.
+
+John Gibson (Anaheim Ducks), Peter Budaj (Tampa Bay Lightning), Mike Condon (Ottawa Senators), Matthew Murray (Pittsburgh Penguins).
+
+***
+
+## Correlation Plots {.tabset .tabset-fade .tabset-pills}
+
+<br>
+
+Below are two plots to show how well each statistic correlates with each other statistic. A darker, larger bubble indicates higher correlation, whereas a smaller, lighter one indicates low correlation.
+
+<br>
+
+### Skaters
+```{r, comment = NA, null_prefix=TRUE}
+
+corrplot(Skaters.Cor, method = "circle") #plot matrix
+
+```
+
+### Goalies
+```{r, comment = NA, null_prefix=TRUE}
+
+corrplot(Goalies.Cor, method = "circle") #plot matrix
+```
+
+<br>
+
+##Conclusion
+
+As with any sport, there are always going to be players who overperform, and those who underperform. However, the data shows that there are definitive discrepancies, and clear ways that teams can maximize their money to build the best, most efficient team possible. The first possible way, is to invest in youth. The data overwhelmingly shows that the most underpaid players are generally young players. A team could throw money comprable to the league minimum at young players in hopes of striking it rich. Data shows they will at least get a decent return on their investment. The second would be to find, and invest in a long-term journeyman, like Dennis Seidenberg. He won't be the most dominant player, but he would give consistently above average production over a long career.
+
+For Goalies, whose salary, at times, seemed to make absolutely no sense, the answer is clear. Backups generally produce way more value in net. Teams in search of a decent Goalie are far better suited pursuing a current backup (or, in more than a few cases, turning to their own), who they could acquire cheaply and get solid production out of. Another solution for teams in Goalie trouble would be to institute a more equitable timeshare between their Goalies. For example, a split tandem of Philip Grubauer and Aaron Dell would have produced great value this year, and would have only cost 1.4 million. Sergei Bobrovsky, of the Columbus Blue Jackets, was brilliant this year, but his value and efficiency across an entire season does not equal that of more that of a well-put-together combination of former backups. Either of these systems would be far more effective in solving goaltending woes than throwing Henrik Lundqvist-type money at a Goalie. As we saw this year, it doesn't always work out as well as a team might hope.
+
+Freeing up money by investing in young players, and Goalie timeshares would make a team more effective, and would free up a lot of salary room to allow a team to comfortably take a chance on one or two star players in the mold of Sidney Crosby or Alex Ovechkin. A solid statistical analysis could be the front office's guide to producing a ridiculously efficient super-team.
+
+The dataset used for this study can be viewed and downloaded below:
+
+```{r, comment=NA, echo=FALSE, warning=FALSE, message=FALSE}
+library(readr)
+library(shiny)
+
+ui <- fluidPage(
+  titlePanel('MoneyPuck Data Sets'),
+  sidebarLayout(
+    sidebarPanel(
+      selectInput("dataset", "Choose a dataset:", 
+                  choices = c("Skaters", "Goalies")),
+      downloadButton('downloadData', 'Download')
+    ),
+    mainPanel(
+      tableOutput('table')
+    )
+  )
+)
+
+NHL_Skaters <- read_csv("~/Stat370server/NHL_Stats.csv")
+View(NHL_Skaters)
+##Skaters
+
+NHL_Goalies <- read_csv("~/Stat370server/NHL_Stats_Goalies.csv")
+View(NHL_Goalies)
+##Goalies
+
+server <- function(input, output) {
+  datasetInput <- reactive({
+    switch(input$dataset,
+           "Skaters" = NHL_Skaters,
+           "Goalies" = NHL_Goalies)
+  })
+  
+  output$table <- renderTable({
+    datasetInput()
+  })
+  
+  output$downloadData <- downloadHandler(
+    filename = function() { 
+      paste(input$dataset, '.csv', sep='')
+    },
+    content = function(file) {
+      write.csv(datasetInput(), file)
+    }
+  )
+}
+
+shinyApp(ui = ui, server = server)
+```
+
+
