@@ -1107,3 +1107,48 @@ For Goalies, whose salary, at times, seemed to make absolutely no sense, the ans
 
 Freeing up money by investing in young players, and Goalie timeshares would make a team more effective, and would free up a lot of salary room to allow a team to comfortably take a chance on one or two star players in the mold of Sidney Crosby or Alex Ovechkin. A solid statistical analysis could be the front office's guide to producing a ridiculously efficient super-team.
 
+The dataset used for this study can be viewed and downloaded below:
+
+```{r, echo = FALSE}
+library(shiny)
+
+ui <- fluidPage(
+  titlePanel('MoneyPuck Data Sets'),
+  sidebarLayout(
+    sidebarPanel(
+      selectInput("dataset", "Choose a dataset:", 
+                  choices = c("Skaters", "Goalies")),
+      downloadButton('downloadData', 'Download')
+    ),
+    mainPanel(
+      tableOutput('table')
+    )
+  )
+)
+
+server <- function(input, output) {
+  datasetInput <- reactive({
+    switch(input$dataset,
+           "Skaters" = NHL_Skaters,
+           "Goalies" = NHL_Goalies)
+  })
+  
+  output$table <- renderTable({
+    datasetInput()
+  })
+  
+  output$downloadData <- downloadHandler(
+    filename = function() { 
+      paste(input$dataset, '.csv', sep='')
+    },
+    content = function(file) {
+      write.csv(datasetInput(), file)
+    }
+  )
+}
+
+shinyApp(ui = ui, server = server)
+```
+
+
+
