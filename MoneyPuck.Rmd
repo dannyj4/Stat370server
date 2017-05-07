@@ -784,7 +784,7 @@ Using the same algorithm as was used for Goalies, Forwards were assigned their o
 
 Again, it is important to note that this only reflects value for this season, and not over the course of multiple seasons.
 
-The summary statistics for Forwards' Jeffrickas and the graph of its correlation with Team Points are shown below. 
+The summary statistics for Forwards' Jeffrickas and the graph of its correlation with Salary are shown below. 
 
 ***
 
@@ -798,7 +798,7 @@ summary(JeffrickasFWD)
 
 ```{r, comment = NA, null_prefix=TRUE}
 
-plot(JeffrickasFWD, NHL_Skaters$TmPoints[Forward])
+plot(JeffrickasFWD, NHL_Skaters$Salary[Forward])
 
 ```
 
@@ -878,7 +878,7 @@ Using the same algorithm as was used for Goalies and Forwards, Defenders were as
 
 Again, it is important to note that this only reflects value compared to salary for the 2016-17 season, and not over the course of multiple seasons.
 
-The summary statistics for Defenders' Jeffrickas and the graph of its correlation with Team Points are shown below.
+The summary statistics for Defenders' Jeffrickas and the graph of its correlation with Salary are shown below.
 
 ***
 
@@ -892,7 +892,7 @@ summary(JeffrickasDEF)
 
 ```{r, comment = NA, null_prefix=TRUE}
 
-plot(JeffrickasDEF, NHL_Skaters$TmPoints[Defender])
+plot(JeffrickasDEF, NHL_Skaters$Salary[Defender])
 
 ```
 
