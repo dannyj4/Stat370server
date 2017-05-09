@@ -910,7 +910,7 @@ Having taken all of this into consideration, and having established a metric to 
 
 ***
 
-For all Jeffrickas indeces, the mean is zero. For Forwards, the standard deviation of the index was 13.21. According the Jeffrickas Index for Skaters, the player with the most pure value (without taking salary into consideration) for the 2016-17 NHL Season was Connor McDavid, the 20-year-old Center for the Edmonton Oilers. He registered the Jeffrickas score of 38.74. The Jeffrickas Index for forwarss places a premium on assists per game, with it being the most heavily weighted factor. McDavid led the league in assists with 70.
+For all Jeffrickas indeces, the mean is zero. For Forwards, the standard deviation of the index was 13.21. According the Jeffrickas Index for Skaters, the player with the most pure value (without taking salary into consideration) for the 2016-17 NHL Season was Connor McDavid, the 20-year-old Center for the Edmonton Oilers. He registered the Jeffrickas score of 38.74. The Jeffrickas Index for Forwards places a premium on assists per game, with it being the most heavily weighted factor. McDavid led the league in assists with 70.
 
 McDavid's Jeffrickas score was narrowly 0.03 points higher than the second-best forward, Sidney Crosby, of the Pittsburgh Penguins, who scored a 38.71. Coming in third, with a score of 33.41, was Nikita Kucherov, a Right Winger for the Tampa Bay Lightning.
 
