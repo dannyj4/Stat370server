@@ -582,7 +582,7 @@ DEF_MoneyPuck <- c(DEF_Salary.z - DEF_Jeffrickas.z)
 FWD_MoneyPuck <- c(FWD_Salary.z - FWD_Jeffrickas.z)
 GOL_MoneyPuck <- c(GOL_Salary.z - GOL_Jeffrickas.z)
 
-linear <- curve(x^1, from=-4, to=50, , xlab="x", ylab="y")
+linear <- curve(x^1, from=-4, to=50, xlab="x", ylab="y")
 
 ```
 
@@ -1097,7 +1097,15 @@ corrplot(Skaters.Cor, method = "circle") #plot matrix
 corrplot(Goalies.Cor, method = "circle") #plot matrix
 ```
 
-<br>
+##Overall Results {.tabset .tabset-fade .tabset-pills}
+
+Below, you can find the Jeffrickas ratings for every player at each of the three postions, along with their actual salary, and their expected salary based on their Jeffrickas score (Season Value). Note, a few players scored so low on the Jeffrickas index that their expected salary is negative, suggesting they may soon be seeking employment outside the NHL.
+
+###FWDs 1-25
+![](/Users/Daniel/Desktop/Forwards_1thru25.png)
+
+###FWDs 26-50
+![](/Users/Daniel/Desktop/Forwards_26thru50.png)
 
 ##Conclusion
 

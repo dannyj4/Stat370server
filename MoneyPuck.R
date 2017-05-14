@@ -601,5 +601,9 @@ DEF_MoneyPuck <- c(DEF_Salary.z - DEF_Jeffrickas.z)
 FWD_MoneyPuck <- c(FWD_Salary.z - FWD_Jeffrickas.z)
 GOL_MoneyPuck <- c(GOL_Salary.z - GOL_Jeffrickas.z)
 
-linear <- curve(x^1, from=-4, to=50, , xlab="x", ylab="y")
+linear <- curve(x^1, from=-4, to=50, xlab="x", ylab="y")
+linear2 <- curve(x^1 + 2.28, from = -4, to = 50, xlab = "x", ylab = "y")
  
+ExpectedSalaryFWD <- (2.56 + FWD_Jeffrickas.z*2.3)
+ExpectedSalaryDEF <- (2.62 + DEF_Jeffrickas.z*2.05)
+ExpectedSalaryGOL <- (3.39 + GOL_Jeffrickas.z*2.54)
