@@ -914,7 +914,7 @@ For all Jeffrickas indeces, the mean is zero. For Forwards, the standard deviati
 
 McDavid's Jeffrickas score was narrowly 0.03 points higher than the second-best forward, Sidney Crosby, of the Pittsburgh Penguins, who scored a 38.71. Coming in third, with a score of 33.41, was Nikita Kucherov, a Right Winger for the Tampa Bay Lightning.
 
-For Defensemen, the standard deviation of their index was approximately 6. According to that Index, most valuable Defenseman in the league was Erik Karlsson of the Ottawa Senators. Karlsson posted a Jeffrickas score of 17.30. Karlsson was closely followed in second by Brent Burns of the San Jose Sharks, who scored 16.77 (less than one-tenth of a standard deviation behind). Coming in third was Jared Spurgeon of the Minnesota Wild with a score of 14.43.
+For Defensemen, the standard deviation of their index was approximately 6. According to that Index, most valuable Defenseman in the league was Erik Karlsson of the Ottawa Senators. Karlsson posted a Jeffrickas score of 17.30. Karlsson was closely followed in second by Brent Burns of the San Jose Sharks, who scored 16.77 (less than one-tenth of a standard deviation behind). Coming in third was Mark Giordano of the Calgary Flames with a score of 14.79.
 
 ![Erik Karlsson of the Ottawa Senators](/Users/Daniel/Desktop/Erik_Karlsson3.png)
 
@@ -975,7 +975,7 @@ lines(linear)
 
 ```
 
-Using this methodolgy, to no surprise, McDavid emerges as the most underpaid Forward in the league. His Jeffrickas is the highest in the league amongst Forwards. With a Jeffrickas at his level, he should be paid a little under 9 million per year. However, he only received a salary of 832,500 this year. This isn't too shocking, as he is an incredibly young player. Nevertheless, the Oilers are getting an incredible deal during the length of McDavid's current contract. 
+Using this methodolgy, to no surprise, McDavid emerges as the most underpaid Forward in the league. His Jeffrickas is the highest in the league amongst Forwards. With a Jeffrickas at his level, he should be paid a little over 9.3 million per year. However, he only received a salary of 832,500 this year. This isn't too shocking, as he is an incredibly young player getting paid the rookie maximum yearly salary. Nevertheless, the Oilers are getting an incredible deal during the length of McDavid's current contract. 
 
 <br>
 
@@ -983,7 +983,7 @@ Using this methodolgy, to no surprise, McDavid emerges as the most underpaid For
 
 <br>
 
-Beyond that, David Pastrnak, of the Boston Bruins, came in second, being undercut by a little under 6 million dollars given his value. Leon Draisaitl, a teammate of McDavid's in Edmonton, came in third, having been paid the same 832,500, but having deserved about 6 million.
+Beyond that, David Pastrnak, of the Boston Bruins, came in second, being undercut by a little over 6 million dollars given his value. Leon Draisaitl, a teammate of McDavid's in Edmonton, came in third, having been paid the same 832,500, but having deserved about 6.7 million.
 
 The top ten most underpaid Forwards are listed below, in order of how much they were underpaid:
 
@@ -998,7 +998,7 @@ Auston Matthews (C, Toronto Maple Leafs),
 Viktor Arvidsson (LW, Nashville Predators),
 Jake Guentzel (C, Pittsburgh Penguins).
 
-On the other side, however, there is quite a bit of surprise. The most overpaid player, according to the data (with the exception of Ryan Callahan, who missed most of the season with injury) was Anze Kopitar, of the Los Angeles Kings. Kopitar is a three-time all star, and a two-time Stanley Cup champion. His Jeffrickas score was only about one standard deviation above the mean, whereas his salary of 10 million dollars a year was among the highest in the league. The model indicates he was only worth about 5 million or so this year.
+On the other side, however, there is quite a bit of surprise. The most overpaid player, according to the data (with the exception of Ryan Callahan, who missed most of the season with injury) was Anze Kopitar, of the Los Angeles Kings. Kopitar is a three-time all star, and a two-time Stanley Cup champion. His Jeffrickas score was only about one standard deviation above the mean, whereas his salary of 10 million dollars a year was among the highest in the league. The model indicates he was only worth about 4.9 million or so this year.
 
 <br>
 
@@ -1006,13 +1006,13 @@ On the other side, however, there is quite a bit of surprise. The most overpaid 
 
 <br>
 
-Jonathan Toews, a former MVP and 2016-17 All Star selection, came in as the second most overpaid player. He got paid a lofty 10.5 million dollars this year, whereas his Jeffrickas score suggests he only about 6 million. He definitely has value, and sits among the top of the league. However, the Blackhawks are shelling out far too much cash for what they're getting at this point. Below are the top ten most overpaid in the NHL, in order of how much they're overpaid:
+Jonathan Toews, a former MVP and 2016-17 All Star selection, came in as the second most overpaid player. He got paid a lofty 10.5 million dollars this year, whereas his Jeffrickas score suggests he only about 5.8 million. He definitely has value, and sits among the top of the league. However, the Blackhawks are shelling out far too much cash for what they're getting at this point. Below are the top ten most overpaid in the NHL, in order of how much they're overpaid:
 
 Anze Kopitar (C, Los Angeles Kings), Jonathan Toews (C, Chicago Blackhawks), Carl Soderberg (C, Colorado Avalanche), Claude Giroux (C, Philadelphia Flyers), Tomas Plekanec (C, Montreal Canadiens), Zach Parise (LW, Minnesota Wild), Anton Blidh (LW, Boston Bruins), Bobby Ryan (RW, Ottawa Senators), Marian Gaborik (RW, Los Angeles Kings), Loui Eriksson (LW, Vancouver Canucks).
 
-On the defensive end, the most underpaid Defenseman is Jaccob Slavin of the Carolina Hurricanes. Slavin finished 13th amongst all defenders with 161 blocks in the 2016-17 season. Also of note is that Slavin finished the year with a +/- of 23, despite the Carolina team average being -4.29. Slavin's Jeffrickas shows he was worth about 7 million dollars this season, but was only paid $832,500. This is not entirely shocking, as Slavin is only 22.
+On the defensive end, the most underpaid Defenseman is Jaccob Slavin of the Carolina Hurricanes. Slavin finished 13th amongst all defenders with 161 blocks in the 2016-17 season. Also of note is that Slavin finished the year with a +/- of 23, despite the Carolina team average being -4.29. Slavin's Jeffrickas shows he was worth about 7.6 million dollars this season, but was only paid $832,500. This is not entirely shocking, as Slavin is only 22.
 
-Following Slavin is Justin Schultz of the Pittsburgh Penguins. Schultz finished with a lofty +/- of 27, and scored 51 points, significantly above average for Defenders. While Schultz got paid 1.4 million this season, he was actually worth about 7.5 million.
+Following Slavin is Justin Schultz of the Pittsburgh Penguins. Schultz finished with a lofty +/- of 27, and scored 51 points, significantly above average for Defenders. While Schultz got paid 1.4 million this season, he was actually worth about 7.6 million.
 
 <br>
 
@@ -1020,13 +1020,13 @@ Following Slavin is Justin Schultz of the Pittsburgh Penguins. Schultz finished 
 
 <br>
 
-The man who finished third produces quite an interesting narrative, however. Almost all of the players who rated as severely underpaid (for both Forwards and Defensemen) were very young players who had a breakout year, or whose salaries were restricted by the rookie maximum imposed by the NHL Collective Bargaining Agreement. However, the 35 year old Dennis Seidenberg of the New York Islanders rates as the third most underpaid Defensman. Seidenberg is in his 15th season, playing for his 6th NHL team. Despite this, Seidenberg is only paid 1 million dollars per season. Conversely, he finished over 2 standard deviations above the mean in the Jeffrickas index. This indicates he should have been paid just under 6 million. Seidenberg remained physical, lodging a large number of blocked shots and hits, and a high +/- of 25. He is producing at quite a high level in the twilight of his career.
+The man who finished third produces quite an interesting narrative, however. Almost all of the players who rated as severely underpaid (for both Forwards and Defensemen) were very young players who had a breakout year, or whose salaries were restricted by the rookie maximum imposed by the NHL Collective Bargaining Agreement. However, the 35 year old Dennis Seidenberg of the New York Islanders rates as the third most underpaid Defensman. Seidenberg is in his 15th season, playing for his 6th NHL team. Despite this, Seidenberg is only paid 1 million dollars per season. Conversely, he finished over 2 standard deviations above the mean in the Jeffrickas index. This indicates he should have been paid just under 6.8 million. Seidenberg remained physical, lodging a large number of blocked shots and hits, and a high +/- of 25. He is producing at quite a high level in the twilight of his career.
 
 Rounding out the top 5 most underpaid Defensemen are Brett Pesce of the Carolina Hurricanes, and Zach Werenski of the Columbus Blue Jackets.
 
-On the other hand, there are defenders like the Buffalo Sabres' Dmitry Kulikov. Kulikov got paid a cool 4.5 million this season, despite only posting a grand total of 5 points in 47 games. He average less than one shot per game. His Jeffrickas is so low, it actually indicates he should have to pay the Sabres to play for them. He was worth negative money this season.
+On the other hand, there are defenders like the Buffalo Sabres' Dmitry Kulikov. Kulikov got paid a cool 4.5 million this season, despite only posting a grand total of 5 points in 47 games. He averaged less than one shot per game. His Jeffrickas is so low, it actually indicates he should have to pay the Sabres to play for them. He was worth negative money this season.
 
-Finishing just behind Kulikov in the race to be the most egregiously overpaid Defenseman is the highest paid defender in the league, PK Subban of the Nashville Predators. According to the Jeffrickas index, Subban was only very marginally above average for a Defender. Despite this, he gets paid a hefty 9 million dollars. His play this season, however, was only worth about 3.3 million.
+Finishing just behind Kulikov in the race to be the most egregiously overpaid Defenseman is the highest paid defender in the league, PK Subban of the Nashville Predators. According to the Jeffrickas index, Subban was only very marginally above average for a Defender. Despite this, he gets paid a hefty 9 million dollars. His play this season, however, was only worth about 3.2 million.
 
 Travis Hamonic, of the New York Islanders, Zach Bogosian, of the Buffalo Sabres, and Oliver Ekman-Larsson, of the Arizona Coyotes, complete the top 5 most overpaid Defensemen.
 
@@ -1058,9 +1058,9 @@ Following Lundqvist, albeit by a wide margin, is Semyon Varlamov, of the Colorad
 
 Among the other Goaltenders who were badly overpaid are Mike Smith (Arizona Coyotes), Marc-Andre Fleury (Pittsburgh Penguins), Antti Niemi (Dallas Stars), and Ryan Miller (Vancouver Canucks).
 
-It was already well-established that two of the three best Goalies in the league are backups (Philip Grubauer and Anti Raanta). Naturally, those two are the most underpaid goalies in the league. Grubauer's season was worth about 9.4 million dollars, but he was only paid a lowly 832,500. Raanta was worth just a hair over 8 million while being paid just 1 million. 
+It was already well-established that two of the three best Goalies in the league are backups (Philip Grubauer and Anti Raanta). Naturally, those two are the most underpaid goalies in the league. Grubauer's season was worth about 9.4 million dollars, but he was only paid a lowly 850,000. Raanta was worth just a hair over 8 million while being paid just 1 million. 
 
-Backup Goalies were certainly not done beyond these two, though. The next two Goalies on the underpaid scale are also backups. Carter Hutton of the St. Louis Blues posted a respectable 2.39 Goals Against Average and a 91.3% save percentage. However, where Hutton made his mark was in shutouts. Hutton had shutouts in an incredible 19% of his starts. All in all, Hutton was worth 7.8 million, and was only paid 1.25 million.
+Backup Goalies were certainly not done beyond these two, though. The next two Goalies on the underpaid scale are also backups. Carter Hutton of the St. Louis Blues posted a respectable 2.39 Goals Against Average and a 91.3% save percentage. However, where Hutton made his mark was in shutouts. Hutton had shutouts in an incredible 19% of his starts. All in all, Hutton was worth 7.9 million, and was only paid 1.25 million.
 
 <br>
 
@@ -1068,44 +1068,111 @@ Backup Goalies were certainly not done beyond these two, though. The next two Go
 
 <br>
 
-Aaron Dell, the backup for the San Jose Sharks, quietly had himself an incredible season. He posted a league low in goals per game with a flat 2.00. Not only that, he had a league high save percentage of 93.1%. He had a quality start in 70.6% of his starts, also a league high. Dell's mind-blowing season was worth just under 7 million dollars. However, he was paid a league low for Goalies with only 575,000 dollars in salary this season.
+Aaron Dell, the backup for the San Jose Sharks, quietly had himself an incredible season. He posted a league low in goals per game with a flat 2.00. Not only that, he had a league high save percentage of 93.1%. He had a quality start in 70.6% of his starts, also a league high. Dell's mind-blowing season was worth just under 6.8 million dollars. However, he was paid a league low for Goalies with only 575,000 dollars in salary this season.
 
 Below are the rest of the most underpaid Goalies in the NHL this season. Of them, Budaj and Condon are also backups.
 
 John Gibson (Anaheim Ducks), Peter Budaj (Tampa Bay Lightning), Mike Condon (Ottawa Senators), Matthew Murray (Pittsburgh Penguins).
 
-***
-
-## Correlation Plots {.tabset .tabset-fade .tabset-pills}
-
-<br>
-
-Below are two plots to show how well each statistic correlates with each other statistic. A darker, larger bubble indicates higher correlation, whereas a smaller, lighter one indicates low correlation.
-
-<br>
-
-### Skaters
-```{r, comment = NA, null_prefix=TRUE}
-
-corrplot(Skaters.Cor, method = "circle") #plot matrix
-
-```
-
-### Goalies
-```{r, comment = NA, null_prefix=TRUE}
-
-corrplot(Goalies.Cor, method = "circle") #plot matrix
-```
-
-##Overall Results {.tabset .tabset-fade .tabset-pills}
+##Overall Results
 
 Below, you can find the Jeffrickas ratings for every player at each of the three postions, along with their actual salary, and their expected salary based on their Jeffrickas score (Season Value). Note, a few players scored so low on the Jeffrickas index that their expected salary is negative, suggesting they may soon be seeking employment outside the NHL.
 
-###FWDs 1-25
+###Forwards {.tabset .tabset-fade .tabset-pills}
+
+####1-25
 ![](/Users/Daniel/Desktop/Forwards_1thru25.png)
 
-###FWDs 26-50
+####26-50
 ![](/Users/Daniel/Desktop/Forwards_26thru50.png)
+
+####51-75
+![](/Users/Daniel/Desktop/Forwards_51thru75.png)
+
+####76-100
+![](/Users/Daniel/Desktop/Forwards_76thru100.png)
+
+####101-125
+![](/Users/Daniel/Desktop/Forwards_101thru125.png)
+
+####126-150
+![](/Users/Daniel/Desktop/Forwards_126thru150.png)
+
+####151-175
+![](/Users/Daniel/Desktop/Forwards_151thru175.png) 
+
+####176-200
+![](/Users/Daniel/Desktop/Forwards_176thru200.png)
+
+####201-225
+![](/Users/Daniel/Desktop/Forwards_201thru225.png)
+
+####226-250
+![](/Users/Daniel/Desktop/Forwards_226thru250.png)
+
+####251-275
+![](/Users/Daniel/Desktop/Forwards_251thru275.png)
+
+####276-300
+![](/Users/Daniel/Desktop/Forwards_276thru300.png)
+
+####301-325
+![](/Users/Daniel/Desktop/Forwards_301thru325.png)
+
+####326-350
+![](/Users/Daniel/Desktop/Forwards_326thru350.png)
+
+####351-375
+![](/Users/Daniel/Desktop/Forwards_351thru375.png)
+
+####376-400
+![](/Users/Daniel/Desktop/Forwards_376thru400.png)
+
+####401-425
+![](/Users/Daniel/Desktop/Forwards_401thru425.png)
+
+####426-440
+![](/Users/Daniel/Desktop/Forwards_426thru440.png)
+
+###Defenders {.tabset .tabset-fade .tabset-pills}
+
+####1-25
+![](/Users/Daniel/Desktop/Defenders_1thru25.png)
+
+####26-50
+![](/Users/Daniel/Desktop/Defenders_26thru50.png)
+
+####51-75
+![](/Users/Daniel/Desktop/Defenders_51thru75.png)
+
+####76-100
+![](/Users/Daniel/Desktop/Defenders_76thru100.png)
+
+####101-125
+![](/Users/Daniel/Desktop/Defenders_101thru125.png)
+
+####126-150
+![](/Users/Daniel/Desktop/Defenders_126thru150.png)
+
+####151-175
+![](/Users/Daniel/Desktop/Defenders_151thru175.png)
+
+####176-200
+![](/Users/Daniel/Desktop/Defenders_176thru200.png)
+
+####201-225
+![](/Users/Daniel/Desktop/Defenders_201thru225.png)
+
+####226-235
+![](/Users/Daniel/Desktop/Defenders_226thru235.png)
+
+###Goalies {.tabset .tabset-fade .tabset-pills}
+
+####1-30
+![](/Users/Daniel/Desktop/Goalies_1thru30.png)
+
+####31-60
+![](/Users/Daniel/Desktop/Goalies_31thru60.png)
 
 ##Conclusion
 
